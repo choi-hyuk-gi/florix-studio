@@ -1,0 +1,39 @@
+backend:
+  name: github
+  repo: choi-hyuk-gi/florix-studio
+  branch: main
+  base_url: https://florix-cms-oauth.gurrl978.workers.dev
+  auth_endpoint: auth
+
+media_folder: "public/uploads"
+public_folder: "/uploads"
+
+locale: "ko"
+
+collections:
+  - name: "works"
+    label: "시공 사례"
+    label_singular: "시공 사례"
+    folder: "src/content/works"
+    create: true
+    slug: "{{year}}-{{month}}-{{day}}-{{slug}}"
+    summary: "{{title}} - {{location}}"
+    fields:
+      - { label: "제목", name: "title", widget: "string", hint: "예: 강남 카페 시공" }
+      - { label: "지역", name: "location", widget: "string", hint: "예: 서울 강남구" }
+      - { label: "면적 (㎡)", name: "area", widget: "number", required: false, hint: "예: 120" }
+      - label: "공간 종류"
+        name: "category"
+        widget: "select"
+        options: ["주거", "카페", "상업공간", "사무공간", "기타"]
+      - { label: "시공일", name: "date", widget: "datetime", format: "YYYY-MM-DD", time_format: false }
+      - { label: "대표 사진", name: "thumbnail", widget: "image", hint: "리스트 메인 사진" }
+      - label: "추가 사진"
+        name: "gallery"
+        widget: "list"
+        required: false
+        field: { label: "사진", name: "image", widget: "image" }
+      - { label: "사용 컬러/규사", name: "specs", widget: "string", required: false, hint: "예: 베이지 톤 / 중간 규사 / 매트 마감" }
+      - { label: "시공 소요시간", name: "duration", widget: "string", required: false, default: "1일 완공" }
+      - { label: "본문", name: "body", widget: "markdown" }
+      - { label: "메인 노출", name: "featured", widget: "boolean", default: false, hint: "체크 시 홈에 우선 노출" }
