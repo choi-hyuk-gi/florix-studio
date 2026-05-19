@@ -1,0 +1,25 @@
+# Florix Studio - robots.txt
+
+User-agent: *
+Allow: /
+
+# 네이버 검색봇 명시
+User-agent: Yeti
+Allow: /
+
+# 구글 검색봇
+User-agent: Googlebot
+Allow: /
+
+# AI 학습 차단
+User-agent: GPTBot
+Disallow: /
+
+User-agent: CCBot
+Disallow: /
+
+User-agent: ClaudeBot
+Disallow: /
+
+# Sitemap 위치
+Sitemap: https://florixstudio.co.kr/sitemap-index.xml
