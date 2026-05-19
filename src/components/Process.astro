@@ -1,0 +1,32 @@
+---
+const steps = [
+  { step: "01", title: "현장 방문 견적", desc: "직접 방문해 공간 상태를 확인하고 정확한 견적을 제공합니다." },
+  { step: "02", title: "기존 바닥 정리", desc: "기존 도료·코팅을 제거하고 표면을 평탄화합니다." },
+  { step: "03", title: "폴리싱 시공", desc: "단계별 연마로 콘크리트 표면을 정밀하게 마감합니다." },
+  { step: "04", title: "마감 코팅", desc: "친환경 코팅재로 내구성과 광택을 동시에 완성합니다." },
+];
+---
+
+<section id="process" class="px-6 md:px-12 py-20 md:py-28 border-t border-border">
+  <div class="max-w-6xl mx-auto">
+    <div class="mb-16 md:mb-20">
+      <div class="text-[11px] tracking-[0.32em] text-accent font-bold mb-5">PROCESS</div>
+      <h2 class="text-[36px] md:text-[56px] font-black tracking-[-0.035em] text-text leading-[1.05] max-w-[700px]">
+        문의부터 완공까지<br />
+        단 4단계.
+      </h2>
+    </div>
+
+    <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-10 md:gap-8">
+      {steps.map((s) => (
+        <div class="relative">
+          <div class="text-[88px] font-black tracking-[-0.06em] leading-none mb-4 text-dim/40 select-none">
+            {s.step}
+          </div>
+          <h3 class="text-xl font-extrabold mb-3 tracking-[-0.02em] text-text">{s.title}</h3>
+          <p class="text-[14px] text-muted leading-[1.75]">{s.desc}</p>
+        </div>
+      ))}
+    </div>
+  </div>
+</section>

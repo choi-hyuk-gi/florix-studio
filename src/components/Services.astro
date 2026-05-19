@@ -1,0 +1,48 @@
+---
+const services = [
+  {
+    label: "01 / RESIDENTIAL",
+    title: "주거 공간",
+    items: ["아파트 · 빌라", "단독 주택", "펜션 · 게스트하우스"],
+  },
+  {
+    label: "02 / COMMERCIAL",
+    title: "상업 공간",
+    items: ["카페 · 레스토랑", "편집숍 · 쇼룸", "갤러리 · 전시장"],
+  },
+  {
+    label: "03 / WORKSPACE",
+    title: "업무 공간",
+    items: ["오피스 · 스튜디오", "병원 · 클리닉", "체육관 · 필라테스"],
+  },
+];
+---
+
+<section id="services" class="px-6 md:px-12 py-20 md:py-28 border-t border-border bg-surface">
+  <div class="max-w-6xl mx-auto">
+    <div class="mb-16 md:mb-20">
+      <div class="text-[11px] tracking-[0.32em] text-accent font-bold mb-5">SERVICES</div>
+      <h2 class="text-[36px] md:text-[56px] font-black tracking-[-0.035em] text-text leading-[1.05] max-w-[700px]">
+        모든 공간에<br />
+        같은 완성도로.
+      </h2>
+    </div>
+
+    <div class="grid md:grid-cols-3 gap-px bg-border">
+      {services.map((s) => (
+        <div class="bg-surface p-8 md:p-10 hover:bg-bg transition-colors">
+          <div class="text-[10px] tracking-[0.32em] text-accent font-bold mb-5">{s.label}</div>
+          <h3 class="text-2xl font-extrabold mb-7 tracking-[-0.02em] text-text">{s.title}</h3>
+          <ul class="space-y-3.5">
+            {s.items.map((item) => (
+              <li class="flex items-start gap-3 text-[15px] text-muted leading-relaxed">
+                <span class="inline-block w-1.5 h-1.5 rounded-full bg-accent mt-2 flex-shrink-0"></span>
+                {item}
+              </li>
+            ))}
+          </ul>
+        </div>
+      ))}
+    </div>
+  </div>
+</section>

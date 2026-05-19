@@ -1,0 +1,71 @@
+---
+import "../styles/global.css";
+
+interface Props {
+  title?: string;
+  description?: string;
+  image?: string;
+}
+
+const {
+  title = "플로릭스 스튜디오 | 콘크리트 폴리싱 · 1일 완공 · 전국 시공",
+  description = "콘크리트 폴리싱 전문 스튜디오. 1일 완공, 원하는 색상과 규사로 커스텀 시공. 전국 시공 · 24시간 상담 가능.",
+  image = "/og-image.jpg",
+} = Astro.props;
+
+const canonicalURL = new URL(Astro.url.pathname, Astro.site);
+
+const localBusinessSchema = {
+  "@context": "https://schema.org",
+  "@type": "LocalBusiness",
+  "name": "플로릭스 스튜디오",
+  "alternateName": "FLORIX STUDIO",
+  "description": description,
+  "url": "https://florixstudio.co.kr",
+  "telephone": "+82-10-8930-2266",
+  "email": "contact@florixstudio.co.kr",
+  "image": new URL(image, Astro.site).toString(),
+  "priceRange": "₩₩",
+  "areaServed": { "@type": "Country", "name": "대한민국" },
+  "openingHoursSpecification": {
+    "@type": "OpeningHoursSpecification",
+    "dayOfWeek": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"],
+    "opens": "00:00",
+    "closes": "23:59",
+    "description": "24시간 상담 가능"
+  },
+  "sameAs": [
+    "https://blog.naver.com/wlstjr49",
+    "https://instagram.com/florix.studio",
+    "https://youtube.com/@florixstudio"
+  ]
+};
+---
+
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="canonical" href={canonicalURL} />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <meta name="keywords" content="콘크리트 폴리싱, 콘크리트 연마, 바닥 폴리싱, 콘크리트 광택, 폴리싱 시공, 1일 완공, 전국 시공, 플로릭스 스튜디오, FLORIX STUDIO" />
+    <meta name="author" content="플로릭스 스튜디오" />
+    <meta name="robots" content="index, follow" />
+    <meta name="Yeti" content="index, follow" />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content={canonicalURL} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:image" content={new URL(image, Astro.site)} />
+    <meta property="og:locale" content="ko_KR" />
+    <meta property="og:site_name" content="FLORIX STUDIO" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <script type="application/ld+json" set:html={JSON.stringify(localBusinessSchema)} />
+  </head>
+  <body>
+    <slot />
+  </body>
+</html>

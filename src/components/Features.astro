@@ -1,0 +1,38 @@
+---
+const features = [
+  { num: "01 — SPEED", title: "1일이면<br />끝납니다.", desc: "여름 6시간, 겨울 12시간 양생. 영업을 멈출 일이 없습니다." },
+  { num: "02 — CUSTOM", title: "색과 질감을<br />직접 선택.", desc: "색상부터 규사 입자까지. 공간에 맞는 정확한 마감을 만듭니다." },
+  { num: "03 — STUDIO", title: "시공이 아닌<br />작품으로.", desc: "도장이 아닌 디자인 작업. 한 면, 한 면 검수합니다." },
+];
+
+const stats = [
+  { num: "6", unit: "h", label: "여름 양생 시간" },
+  { num: "12", unit: "h", label: "겨울 양생 시간" },
+  { num: "∞", unit: "", label: "색상 옵션" },
+  { num: "1", unit: "day", label: "평균 완공" },
+];
+---
+
+<section class="grid md:grid-cols-3">
+  {features.map((f, i) => (
+    <div class={`p-10 md:p-14 ${i < features.length - 1 ? "border-b md:border-b-0 md:border-r" : ""} border-border`}>
+      <div class="flex items-center gap-3 text-xs text-accent font-bold mb-8 tracking-[0.25em]">
+        <span class="inline-block w-6 h-px bg-accent"></span>
+        {f.num}
+      </div>
+      <h3 class="text-[28px] md:text-[32px] font-extrabold mb-5 tracking-[-0.025em] leading-[1.15] text-text" set:html={f.title} />
+      <p class="text-[15px] text-muted leading-[1.75] max-w-[280px]">{f.desc}</p>
+    </div>
+  ))}
+</section>
+
+<section class="grid grid-cols-2 md:grid-cols-4 gap-8 md:gap-6 px-6 md:px-12 py-14 md:py-20 border-t border-border">
+  {stats.map((s) => (
+    <div>
+      <div class="text-5xl md:text-6xl font-black tracking-[-0.04em] leading-none mb-3 text-text">
+        {s.num}<span class="text-2xl text-accent ml-1">{s.unit}</span>
+      </div>
+      <div class="text-[13px] text-muted tracking-[0.1em] font-medium">{s.label}</div>
+    </div>
+  ))}
+</section>
