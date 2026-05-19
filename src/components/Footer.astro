@@ -1,47 +1,98 @@
 ---
-const phone = "010-8930-2266";
-const kakaoUrl = "https://pf.kakao.com/_florixstudio";
 ---
 
-<footer class="border-t border-border px-6 md:px-12 py-10 grid md:grid-cols-3 gap-6 text-[12px] text-dim tracking-[0.08em]">
-  <div>
-    <div class="font-black tracking-[0.18em] text-sm text-text mb-3">
-      FLORIX<span class="text-accent mx-1">.</span>STUDIO
+<footer class="bg-bg border-t border-line/60 px-6 lg:px-12 py-20">
+  <div class="max-w-7xl mx-auto">
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-12 md:gap-8 mb-16">
+
+      <div>
+        <div class="flex items-center gap-1 mb-5">
+          <span class="text-base font-black tracking-[-0.02em] text-text">FLORIX</span>
+          <span class="text-accent text-lg leading-none -mt-0.5">.</span>
+          <span class="text-base font-black tracking-[-0.02em] text-text">STUDIO</span>
+        </div>
+        <p class="text-sm text-mood leading-relaxed max-w-xs">
+          콘크리트 폴리싱 전문 스튜디오.<br />
+          1일 양생  커스텀 색상  전국 시공.
+        </p>
+      </div>
+
+      <div>
+        <div class="text-[11px] font-bold tracking-[0.25em] uppercase text-text mb-5">CONTACT</div>
+        <ul class="space-y-2.5 text-sm text-mood">
+          <li>
+            <a href="tel:01089302266" class="hover:text-accent transition-colors">
+              TEL  010-8930-2266
+            </a>
+          </li>
+          <li>
+            <a href="mailto:contact@florixstudio.co.kr" class="hover:text-accent transition-colors">
+              contact@florixstudio.co.kr
+            </a>
+          </li>
+          <li class="pt-2 text-xs text-mood/80">
+            24시간 상담  전국 시공
+          </li>
+        </ul>
+      </div>
+
+      <div>
+        <div class="text-[11px] font-bold tracking-[0.25em] uppercase text-text mb-5">FOLLOW</div>
+        <ul class="space-y-2.5 text-sm text-mood">
+          <li>
+            
+              href="https://blog.naver.com/florix_studios"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="inline-flex items-center gap-2 hover:text-accent transition-colors group"
+            >
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M16.273 12.845 7.376 0H0v24h7.726V11.156L16.624 24H24V0h-7.727v12.845Z"/>
+              </svg>
+              네이버 블로그
+              <span class="text-mood/40 group-hover:text-accent transition-colors"></span>
+            </a>
+          </li>
+          <li>
+            
+              href="https://www.instagram.com/florix_studios"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="inline-flex items-center gap-2 hover:text-accent transition-colors group"
+            >
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="2" y="2" width="20" height="20" rx="5" ry="5"/>
+                <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/>
+                <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/>
+              </svg>
+              Instagram
+              <span class="text-mood/40 group-hover:text-accent transition-colors"></span>
+            </a>
+          </li>
+          <li>
+            
+              href="https://pf.kakao.com/_florixstudio"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="inline-flex items-center gap-2 hover:text-accent transition-colors group"
+            >
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M12 3C6.477 3 2 6.477 2 10.8c0 2.79 1.86 5.24 4.66 6.65l-1.18 4.3c-.11.4.33.72.68.5L11.2 19c.27.02.53.04.8.04 5.523 0 10-3.477 10-7.8S17.523 3 12 3z"/>
+              </svg>
+              카카오톡 채널
+              <span class="text-mood/40 group-hover:text-accent transition-colors"></span>
+            </a>
+          </li>
+        </ul>
+      </div>
+
     </div>
-    <div>© 2026 FLORIX STUDIO. All rights reserved.</div>
-  </div>
-  <div class="md:text-center leading-[1.8]">
-    플로릭스 스튜디오 · 콘크리트 폴리싱<br />
-    TEL 010-8930-2266<br />
-    contact@florixstudio.co.kr
-  </div>
-  <div class="md:text-right leading-[1.8]">
-    전국 시공 · 24시간 상담<br />
-    <a href="https://blog.naver.com/wlstjr49" target="_blank" rel="noopener" class="hover:text-text transition-colors">네이버 블로그</a> ·
-    <a href="https://instagram.com/florix.studio" target="_blank" rel="noopener" class="hover:text-text transition-colors">Instagram</a>
+
+    <div class="pt-10 border-t border-line/60 flex flex-col md:flex-row items-start md:items-center justify-between gap-4 text-[11px] text-mood/70 tracking-wide">
+      <div> 2026 FLORIX STUDIO. ALL RIGHTS RESERVED.</div>
+      <div>CONCRETE POLISHING STUDIO  SEOUL, KOREA</div>
+    </div>
+
   </div>
 </footer>
-
-<div class="fixed bottom-6 right-6 flex flex-col gap-3 z-50">
-  <a
-    href={kakaoUrl}
-    target="_blank"
-    rel="noopener"
-    aria-label="카카오톡 상담"
-    class="w-14 h-14 rounded-full bg-[#FEE500] flex items-center justify-center shadow-lg hover:scale-110 transition-transform"
-  >
-    <svg width="28" height="28" viewBox="0 0 24 24" fill="#1F1A14" xmlns="http://www.w3.org/2000/svg">
-      <path d="M12 3C6.48 3 2 6.58 2 11c0 2.81 1.85 5.27 4.62 6.66l-1.13 4.15c-.1.37.31.66.62.45l4.97-3.28c.31.02.61.02.92.02 5.52 0 10-3.58 10-8S17.52 3 12 3z"/>
-    </svg>
-  </a>
-
-  <a
-    href={`tel:${phone.replace(/-/g, "")}`}
-    aria-label="전화 상담"
-    class="w-14 h-14 rounded-full bg-text flex items-center justify-center shadow-lg hover:scale-110 transition-transform"
-  >
-    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#EFE7D8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-      <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.37 1.9.72 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.91.35 1.85.59 2.81.72A2 2 0 0 1 22 16.92z"/>
-    </svg>
-  </a>
-</div>

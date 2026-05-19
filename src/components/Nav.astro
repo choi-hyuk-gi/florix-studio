@@ -1,19 +1,67 @@
 ---
+const menu = [
+  { label: "서비스", href: "/#services" },
+  { label: "시공 사례", href: "/works/" },
+  { label: "시공 과정", href: "/#process" },
+  { label: "FAQ", href: "/#faq" },
+];
 ---
-<nav class="sticky top-0 z-40 bg-bg/95 backdrop-blur-sm border-b border-line">
-  <div class="flex justify-between items-center px-6 md:px-12 py-5">
-    <a href="/" class="font-black tracking-[0.18em] text-sm text-text">
-      FLORIX<span class="text-accent mx-1">.</span>STUDIO
+
+<nav class="sticky top-0 z-50 bg-bg/90 backdrop-blur-md border-b border-line/50">
+  <div class="max-w-7xl mx-auto px-6 lg:px-12 h-20 flex items-center justify-between">
+
+    <a href="/" class="flex items-center gap-1 group">
+      <span class="text-lg font-black tracking-[-0.02em] text-text">FLORIX</span>
+      <span class="text-accent text-xl leading-none -mt-0.5">.</span>
+      <span class="text-lg font-black tracking-[-0.02em] text-text">STUDIO</span>
     </a>
-    <ul class="hidden md:flex gap-9 list-none">
-      <li><a href="/#services" class="text-mood hover:text-text text-[13px] font-medium tracking-[0.05em] transition-colors">서비스</a></li>
-      <li><a href="/works/" class="text-mood hover:text-text text-[13px] font-medium tracking-[0.05em] transition-colors">시공 사례</a></li>
-      <li><a href="/#process" class="text-mood hover:text-text text-[13px] font-medium tracking-[0.05em] transition-colors">시공 과정</a></li>
-      <li><a href="/#faq" class="text-mood hover:text-text text-[13px] font-medium tracking-[0.05em] transition-colors">FAQ</a></li>
-      <li><a href="https://blog.naver.com/wlstjr49" target="_blank" rel="noopener" class="text-mood hover:text-text text-[13px] font-medium tracking-[0.05em] transition-colors">블로그</a></li>
-    </ul>
-    <a href="/#contact" class="bg-text text-bg hover:bg-accent px-5 py-2.5 font-bold text-[13px] tracking-[0.05em] transition-colors">
-      견적 문의 →
+
+    <div class="hidden md:flex items-center gap-10">
+      {menu.map((item) => (
+        <a href={item.href} class="text-sm text-text hover:text-accent transition-colors tracking-[-0.01em]">
+          {item.label}
+        </a>
+      ))}
+
+      <div class="flex items-center gap-4 pl-2 border-l border-line/60">
+        
+          href="https://blog.naver.com/florix_studios"
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label="네이버 블로그"
+          class="text-mood hover:text-accent transition-colors"
+        >
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+            <path d="M16.273 12.845 7.376 0H0v24h7.726V11.156L16.624 24H24V0h-7.727v12.845Z"/>
+          </svg>
+        </a>
+        
+          href="https://www.instagram.com/florix_studios"
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label="인스타그램"
+          class="text-mood hover:text-accent transition-colors"
+        >
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg">
+            <rect x="2" y="2" width="20" height="20" rx="5" ry="5"/>
+            <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/>
+            <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/>
+          </svg>
+        </a>
+      </div>
+    </div>
+
+    <a href="/#cta" class="hidden md:inline-flex items-center bg-text text-bg text-xs px-5 py-3 hover:bg-accent transition-colors tracking-wider">
+      견적 문의 
     </a>
+
+    <button class="md:hidden text-text" aria-label="메뉴 열기">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <line x1="3" y1="6" x2="21" y2="6"/>
+        <line x1="3" y1="12" x2="21" y2="12"/>
+        <line x1="3" y1="18" x2="21" y2="18"/>
+      </svg>
+    </button>
+
   </div>
 </nav>
