@@ -1,4 +1,4 @@
----
+﻿---
 import "../styles/global.css";
 
 interface Props {
@@ -8,9 +8,9 @@ interface Props {
 }
 
 const {
-  title = "플로릭스 스튜디오 | 콘크리트 폴리싱 · 1일 완공 · 전국 시공",
-  description = "콘크리트 폴리싱 전문 스튜디오. 1일 완공, 원하는 색상과 규사로 커스텀 시공. 전국 시공 · 24시간 상담 가능.",
-  image = "/og-image.jpg",
+  title = "?뚮줈由?뒪 ?ㅽ뒠?붿삤 | 肄섑겕由ы듃 ?대━??쨌 1???꾧났 쨌 ?꾧뎅 ?쒓났",
+  description = "肄섑겕由ы듃 ?대━???꾨Ц ?ㅽ뒠?붿삤. 1???꾧났, ?먰븯???됱긽怨?洹쒖궗濡?而ㅼ뒪? ?쒓났. ?꾧뎅 ?쒓났 쨌 24?쒓컙 ?곷떞 媛??",
+  image = "/og-image.svg",
 } = Astro.props;
 
 const canonicalURL = new URL(Astro.url.pathname, Astro.site);
@@ -18,21 +18,21 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site);
 const localBusinessSchema = {
   "@context": "https://schema.org",
   "@type": "LocalBusiness",
-  "name": "플로릭스 스튜디오",
+  "name": "?뚮줈由?뒪 ?ㅽ뒠?붿삤",
   "alternateName": "FLORIX STUDIO",
   "description": description,
   "url": "https://florixstudio.co.kr",
   "telephone": "+82-10-8930-2266",
   "email": "contact@florixstudio.co.kr",
   "image": new URL(image, Astro.site).toString(),
-  "priceRange": "₩₩",
-  "areaServed": { "@type": "Country", "name": "대한민국" },
+  "priceRange": "?⒱궔",
+  "areaServed": { "@type": "Country", "name": "??쒕?援? },
   "openingHoursSpecification": {
     "@type": "OpeningHoursSpecification",
     "dayOfWeek": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"],
     "opens": "00:00",
     "closes": "23:59",
-    "description": "24시간 상담 가능"
+    "description": "24?쒓컙 ?곷떞 媛??
   },
   "sameAs": [
     "https://blog.naver.com/wlstjr49",
@@ -51,8 +51,8 @@ const localBusinessSchema = {
     <link rel="canonical" href={canonicalURL} />
     <title>{title}</title>
     <meta name="description" content={description} />
-    <meta name="keywords" content="콘크리트 폴리싱, 콘크리트 연마, 바닥 폴리싱, 콘크리트 광택, 폴리싱 시공, 1일 완공, 전국 시공, 플로릭스 스튜디오, FLORIX STUDIO" />
-    <meta name="author" content="플로릭스 스튜디오" />
+    <meta name="keywords" content="肄섑겕由ы듃 ?대━?? 肄섑겕由ы듃 ?곕쭏, 諛붾떏 ?대━?? 肄섑겕由ы듃 愿묓깮, ?대━???쒓났, 1???꾧났, ?꾧뎅 ?쒓났, ?뚮줈由?뒪 ?ㅽ뒠?붿삤, FLORIX STUDIO" />
+    <meta name="author" content="?뚮줈由?뒪 ?ㅽ뒠?붿삤" />
     <meta name="robots" content="index, follow" />
     <meta name="Yeti" content="index, follow" />
     <meta name="naver-site-verification" content="41ea7350c15eb5579261ea35cf371c22a52fb617" />
@@ -70,3 +70,4 @@ const localBusinessSchema = {
     <slot />
   </body>
 </html>
+
