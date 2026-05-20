@@ -25,4 +25,18 @@ const faqs = defineCollection({
   }),
 });
 
-export const collections = { works, faqs };
+const settings = defineCollection({
+  loader: glob({ pattern: '**/*.md', base: './src/content/settings' }),
+  schema: z.object({
+    heroBadge: z.string().default('CONCRETE POLISHING STUDIO'),
+    heroTitle: z.string().default('콘크리트의'),
+    heroTitleAccent: z.string().default('새로운 기준.'),
+    heroSubtitle: z.string().default('1일 완공. 원하는 색상, 원하는 규사.'),
+    heroSubtitle2: z.string().default('시공이 아닌 작품으로 마감합니다.'),
+    heroImage: z.string().optional(),
+    recentWorkLabel: z.string().default('FEATURED WORK'),
+    recentWorkNumber: z.string().default('No. 001'),
+  }),
+});
+
+export const collections = { works, faqs, settings };

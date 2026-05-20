@@ -11,8 +11,26 @@ public_folder: "/uploads"
 locale: "ko"
 
 collections:
+  - name: "settings"
+    label: "🎨 사이트 설정"
+    label_singular: "사이트 설정"
+    folder: "src/content/settings"
+    create: false
+    slug: "{{slug}}"
+    editor:
+      preview: false
+    fields:
+      - { label: "Hero 배지 (작은 글씨)", name: "heroBadge", widget: "string", default: "CONCRETE POLISHING STUDIO · SINCE 2026" }
+      - { label: "Hero 제목 1줄", name: "heroTitle", widget: "string", default: "콘크리트의" }
+      - { label: "Hero 제목 2줄 (강조)", name: "heroTitleAccent", widget: "string", default: "새로운 기준." }
+      - { label: "Hero 부제목 1", name: "heroSubtitle", widget: "string", default: "1일 완공. 원하는 색상, 원하는 규사." }
+      - { label: "Hero 부제목 2", name: "heroSubtitle2", widget: "string", default: "시공이 아닌 작품으로 마감합니다." }
+      - { label: "Hero 우측 사진 (없으면 PHOTO COMING SOON)", name: "heroImage", widget: "image", required: false, hint: "비워두면 기본 그라데이션" }
+      - { label: "Recent Work 라벨", name: "recentWorkLabel", widget: "string", default: "FEATURED WORK" }
+      - { label: "Recent Work 번호", name: "recentWorkNumber", widget: "string", default: "No. 001" }
+
   - name: "works"
-    label: "시공 사례"
+    label: "📷 시공 사례"
     label_singular: "시공 사례"
     folder: "src/content/works"
     create: true
@@ -39,7 +57,7 @@ collections:
       - { label: "메인 노출", name: "featured", widget: "boolean", default: false, hint: "체크 시 홈에 우선 노출" }
 
   - name: "faqs"
-    label: "FAQ (자주 묻는 질문)"
+    label: "❓ FAQ (자주 묻는 질문)"
     label_singular: "FAQ"
     folder: "src/content/faqs"
     create: true
