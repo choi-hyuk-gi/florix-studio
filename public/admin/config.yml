@@ -25,7 +25,15 @@ collections:
       - { label: "Hero 제목 2줄 (강조)", name: "heroTitleAccent", widget: "string", default: "새로운 기준." }
       - { label: "Hero 부제목 1", name: "heroSubtitle", widget: "string", default: "1일 완공. 원하는 색상, 원하는 규사." }
       - { label: "Hero 부제목 2", name: "heroSubtitle2", widget: "string", default: "시공이 아닌 작품으로 마감합니다." }
-      - { label: "Hero 우측 사진 (없으면 PHOTO COMING SOON)", name: "heroImage", widget: "image", required: false, hint: "비워두면 기본 그라데이션" }
+      - { label: "Hero 우측 단일 사진 (슬라이드 안 쓸 때만)", name: "heroImage", widget: "image", required: false, hint: "슬라이드 사진을 1장 이상 추가하면 이건 무시됨" }
+      - label: "🎬 Hero 슬라이드 사진들 (여러 장이면 자동 슬라이드)"
+        name: "heroSlides"
+        widget: "list"
+        required: false
+        summary: "{{fields.alt}}"
+        fields:
+          - { label: "사진", name: "image", widget: "image" }
+          - { label: "설명 (선택)", name: "alt", widget: "string", required: false, hint: "예: 베이지 톤 카페 시공" }
       - { label: "Recent Work 라벨", name: "recentWorkLabel", widget: "string", default: "FEATURED WORK" }
       - { label: "Recent Work 번호", name: "recentWorkNumber", widget: "string", default: "No. 001" }
 

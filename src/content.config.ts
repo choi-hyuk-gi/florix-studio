@@ -34,6 +34,10 @@ const settings = defineCollection({
     heroSubtitle: z.string().default('1일 완공. 원하는 색상, 원하는 규사.'),
     heroSubtitle2: z.string().default('시공이 아닌 작품으로 마감합니다.'),
     heroImage: z.string().optional(),
+    heroSlides: z.array(z.object({
+      image: z.string(),
+      alt: z.string().optional(),
+    })).default([]),
     recentWorkLabel: z.string().default('FEATURED WORK'),
     recentWorkNumber: z.string().default('No. 001'),
   }),

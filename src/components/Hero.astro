@@ -9,9 +9,15 @@ const s = settings?.data ?? {
   heroSubtitle: '1일 완공. 원하는 색상, 원하는 규사.',
   heroSubtitle2: '시공이 아닌 작품으로 마감합니다.',
   heroImage: '',
+  heroSlides: [],
   recentWorkLabel: 'FEATURED WORK',
   recentWorkNumber: 'No. 001',
 };
+
+// 슬라이드 목록: heroSlides 우선, 없으면 heroImage 1개
+const slides = (s.heroSlides && s.heroSlides.length > 0)
+  ? s.heroSlides
+  : (s.heroImage ? [{ image: s.heroImage, alt: '시공 사례' }] : []);
 ---
 
 <section class="grid md:grid-cols-2 min-h-[600px] md:min-h-[700px]">
@@ -42,16 +48,38 @@ const s = settings?.data ?? {
     </div>
   </div>
 
-  <div class="relative bg-gradient-to-br from-[#C9BCA0] via-[#BCAD8E] to-[#A89878] overflow-hidden">
-    <div class="absolute top-6 left-6 z-10 text-[11px] tracking-[0.3em] text-text/70 font-bold">
+  <div class="relative bg-gradient-to-br from-[#C9BCA0] via-[#BCAD8E] to-[#A89878] overflow-hidden hero-slideshow">
+    <div class="absolute top-6 left-6 z-30 text-[11px] tracking-[0.3em] text-white/90 font-bold drop-shadow">
       / {s.recentWorkLabel}
     </div>
-    <div class="absolute top-6 right-6 z-10 text-[11px] tracking-[0.3em] text-text/70 font-bold">
+    <div class="absolute top-6 right-6 z-30 text-[11px] tracking-[0.3em] text-white/90 font-bold drop-shadow">
       {s.recentWorkNumber}
     </div>
 
-    {s.heroImage && s.heroImage !== "" ? (
-      <img src={s.heroImage} alt="시공 사례" class="w-full h-full object-cover" />
+    {slides.length > 0 ? (
+      <>
+        {slides.map((slide, i) => (
+          <div
+            class={`slide absolute inset-0 transition-opacity duration-1000 ease-in-out ${i === 0 ? "opacity-100" : "opacity-0"}`}
+            data-slide-index={i}
+          >
+            <img src={slide.image} alt={slide.alt ?? "시공 사례"} class="w-full h-full object-cover" />
+          </div>
+        ))}
+
+        {slides.length > 1 && (
+          <div class="absolute bottom-6 left-1/2 -translate-x-1/2 z-30 flex gap-2 slide-dots">
+            {slides.map((_, i) => (
+              <button
+                type="button"
+                aria-label={`슬라이드 ${i + 1}`}
+                data-dot-index={i}
+                class={`slide-dot w-2 h-2 rounded-full transition-all ${i === 0 ? "bg-white w-6" : "bg-white/50"}`}
+              />
+            ))}
+          </div>
+        )}
+      </>
     ) : (
       <div class="absolute inset-0 flex items-center justify-center">
         <div class="text-center">
@@ -67,3 +95,55 @@ const s = settings?.data ?? {
   </div>
 
 </section>
+
+<script is:inline>
+  (function() {
+    const container = document.querySelector(".hero-slideshow");
+    if (!container) return;
+    const slides = container.querySelectorAll(".slide");
+    const dots = container.querySelectorAll(".slide-dot");
+    if (slides.length <= 1) return;
+
+    let current = 0;
+    let timer = null;
+    let paused = false;
+
+    function goTo(idx) {
+      slides.forEach(function(s, i) {
+        s.style.opacity = (i === idx) ? "1" : "0";
+      });
+      dots.forEach(function(d, i) {
+        if (i === idx) {
+          d.classList.remove("bg-white/50");
+          d.classList.add("bg-white", "w-6");
+        } else {
+          d.classList.remove("bg-white", "w-6");
+          d.classList.add("bg-white/50");
+        }
+      });
+      current = idx;
+    }
+
+    function next() {
+      if (paused) return;
+      goTo((current + 1) % slides.length);
+    }
+
+    function start() {
+      if (timer) clearInterval(timer);
+      timer = setInterval(next, 4000);
+    }
+
+    dots.forEach(function(dot, i) {
+      dot.addEventListener("click", function() {
+        goTo(i);
+        start();
+      });
+    });
+
+    container.addEventListener("mouseenter", function() { paused = true; });
+    container.addEventListener("mouseleave", function() { paused = false; });
+
+    start();
+  })();
+</script>
