@@ -17,4 +17,12 @@ const works = defineCollection({
   }),
 });
 
-export const collections = { works };
+const faqs = defineCollection({
+  loader: glob({ pattern: '**/*.md', base: './src/content/faqs' }),
+  schema: z.object({
+    question: z.string(),
+    order: z.number().default(99),
+  }),
+});
+
+export const collections = { works, faqs };

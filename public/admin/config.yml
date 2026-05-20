@@ -37,3 +37,15 @@ collections:
       - { label: "시공 소요시간", name: "duration", widget: "string", required: false, default: "1일 완공" }
       - { label: "본문", name: "body", widget: "markdown" }
       - { label: "메인 노출", name: "featured", widget: "boolean", default: false, hint: "체크 시 홈에 우선 노출" }
+
+  - name: "faqs"
+    label: "FAQ (자주 묻는 질문)"
+    label_singular: "FAQ"
+    folder: "src/content/faqs"
+    create: true
+    slug: "{{slug}}"
+    summary: "{{question}}"
+    fields:
+      - { label: "질문", name: "question", widget: "string", hint: "예: 시공 시간은 얼마나 걸리나요?" }
+      - { label: "순서", name: "order", widget: "number", default: 99, hint: "낮은 숫자가 위로 (1, 2, 3...)" }
+      - { label: "답변", name: "body", widget: "text", hint: "고객에게 보여질 답변" }
