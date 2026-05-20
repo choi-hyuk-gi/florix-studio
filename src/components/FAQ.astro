@@ -1,32 +1,57 @@
 ---
 const faqs = [
-  { q: "?쒓났 ?쒓컙? ?쇰쭏??嫄몃━?섏슂?", a: "蹂댄넻 20~50??湲곗? ?섎（(6~8?쒓컙) ?덉뿉 ?꾨즺?⑸땲?? 硫댁쟻怨??꾩옣 ?곹깭???곕씪 李⑥씠媛 ?덉쑝??寃ъ쟻 ???덈궡?쒕┰?덈떎." },
-  { q: "?꾧뎅 ?대뵒???쒓났??媛?ν븳媛??", a: "?? ?쒖＜?꾨? ?ы븿???꾧뎅 紐⑤뱺 吏??뿉???쒓났?⑸땲?? ?먭굅由щ뒗 異쒖옣鍮꾧? 異붽??????덉뒿?덈떎." },
-  { q: "湲곗〈 ??쇱씠???ν뙋 ?꾩뿉 諛붾줈 ?쒓났?????덈굹??", a: "湲곗〈 留덇컧??醫낅쪟? ?곹깭???곕씪 媛???щ?媛 ?щ씪吏묐땲?? ?꾩옣 諛⑸Ц 寃ъ쟻 ???뺤씤 ???덈궡?쒕┰?덈떎." },
-  { q: "寃ъ쟻? ?대뼸寃?諛쏅굹??", a: "移댁뭅?ㅽ넚 梨꾨꼸 ?먮뒗 ?꾪솕(010-8930-2266)濡?硫댁쟻怨??ъ쭊??蹂대궡二쇱떆硫?鍮좊Ⅴ寃??덈궡?쒕┰?덈떎." },
-  { q: "?쒓났 ???좎? 愿由щ뒗 ?대뼸寃??섎굹??", a: "?꾧났 ???쇰컲 以묒꽦 ?몄젣濡?臾쇱껌??媛?ν빀?덈떎. 3~5??二쇨린濡?由ъ퐫?낆쓣 沅뚯옣?쒕┰?덈떎." },
+  {
+    q: "시공 시간은 얼마나 걸리나요?",
+    a: "여름 6시간 / 겨울 12시간 안에 양생까지 완료됩니다. 1일 완공 원칙으로 다음 날 정상 사용 가능합니다."
+  },
+  {
+    q: "전국 어디든 시공이 가능한가요?",
+    a: "네, 전국 시공 가능합니다. 지역에 따라 출장비가 추가될 수 있으며, 견적 시 정확히 안내드립니다."
+  },
+  {
+    q: "기존 타일이나 장판 위에 바로 시공할 수 있나요?",
+    a: "현장 상태에 따라 다릅니다. 기존 마감재를 철거한 후 시공하는 것이 일반적이며, 현장 확인 후 정확한 방법을 안내드립니다."
+  },
+  {
+    q: "견적은 어떻게 받나요?",
+    a: "카카오톡 채널 또는 전화(010-8930-2266)로 문의 주시면 24시간 이내 답변드립니다. 정확한 견적은 현장 방문 후 산출됩니다."
+  },
+  {
+    q: "시공 후 유지 관리는 어떻게 하나요?",
+    a: "일반 청소(물걸레, 중성세제)로 충분합니다. 강산성/강알칼리성 세제는 피해주세요. 5년 이상 광택 유지가 가능합니다."
+  }
 ];
 ---
 
-<section id="faq" class="px-6 md:px-12 py-20 md:py-28 border-t border-border bg-surface">
-  <div class="max-w-3xl mx-auto">
-    <div class="mb-16 md:mb-20 text-center">
-      <div class="text-[11px] tracking-[0.32em] text-accent font-bold mb-5">FAQ</div>
-      <h2 class="text-[36px] md:text-[56px] font-black tracking-[-0.035em] text-text leading-[1.05]">
-        ?먯＜ 臾삳뒗 吏덈Ц
-      </h2>
-    </div>
+<section id="faq" class="bg-bg px-6 lg:px-12 py-32 border-t border-line">
+  <div class="max-w-4xl mx-auto">
 
-    <div class="space-y-3">
-      {faqs.map((faq) => (
-        <details class="group border border-border bg-bg hover:border-border-strong transition-colors">
-          <summary class="flex items-center justify-between px-6 py-5 cursor-pointer text-[15px] font-bold text-text list-none">
-            <span>{faq.q}</span>
-            <span class="text-accent ml-4 text-2xl leading-none transition-transform group-open:rotate-45">+</span>
+    <header class="text-center mb-20">
+      <div class="inline-flex items-center gap-3 mb-6">
+        <div class="w-8 h-px bg-accent"></div>
+        <span class="text-[11px] font-bold tracking-[0.3em] uppercase text-accent">FAQ</span>
+        <div class="w-8 h-px bg-accent"></div>
+      </div>
+      <h2 class="text-4xl md:text-6xl font-black text-text leading-[0.95] tracking-[-0.045em]">
+        자주 묻는 질문
+      </h2>
+    </header>
+
+    <div class="space-y-4">
+      {faqs.map((faq, i) => (
+        <details class="group bg-line/40 hover:bg-line/60 transition-colors">
+          <summary class="cursor-pointer list-none flex items-center justify-between gap-4 px-6 py-5">
+            <span class="text-base md:text-lg font-bold text-text tracking-[-0.02em]">
+              {faq.q}
+            </span>
+            <span class="text-2xl text-accent shrink-0 group-open:rotate-45 transition-transform">+</span>
           </summary>
-          <p class="px-6 pb-6 text-[14px] text-muted leading-[1.8] border-t border-border pt-5">{faq.a}</p>
+          <div class="px-6 pb-6 text-mood text-sm md:text-base leading-relaxed">
+            {faq.a}
+          </div>
         </details>
       ))}
     </div>
+
   </div>
 </section>
