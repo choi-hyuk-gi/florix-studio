@@ -43,7 +43,7 @@ const menu = [
       견적 문의 →
     </a>
 
-    <button id="mobile-menu-btn" class="md:hidden text-text relative z-50" aria-label="메뉴 열기" aria-expanded="false">
+    <button id="mobile-menu-btn" type="button" class="md:hidden text-text relative z-50" aria-label="메뉴 열기" aria-expanded="false">
       <svg id="icon-open" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
         <line x1="3" y1="6" x2="21" y2="6"/>
         <line x1="3" y1="12" x2="21" y2="12"/>
@@ -57,9 +57,9 @@ const menu = [
 
   </div>
 
-  <div id="mobile-menu" class="md:hidden fixed inset-0 top-20 bg-bg z-40 hidden flex-col">
-    <div class="flex-1 overflow-y-auto px-6 py-12">
-      <ul class="space-y-6 mb-12">
+  <div id="mobile-menu" class="md:hidden fixed inset-x-0 bottom-0 bg-bg z-40 hidden flex-col" style="top:5rem;">
+    <div class="flex-1 overflow-y-auto px-6 py-10">
+      <ul class="space-y-5 mb-10">
         {menu.map((item) => (
           <li>
             <a href={item.href} class="block text-3xl font-black text-text hover:text-accent transition-colors tracking-[-0.03em] mobile-link">
