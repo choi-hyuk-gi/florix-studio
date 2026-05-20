@@ -5,13 +5,7 @@ heroTitleAccent: 새로운 기준.
 heroSubtitle: 1일 완공. 원하는 색상, 원하는 규사.
 heroSubtitle2: 시공이 아닌 작품으로 마감합니다.
 heroImage: /uploads/kakaotalk_20260520_210600922_01.png
-<<<<<<< Updated upstream
-recentWorkLabel: FEATURED WORK
-recentWorkNumber: No. 001
----
-=======
 heroSlides: []
 recentWorkLabel: FEATURED WORK
 recentWorkNumber: No. 001
 ---
->>>>>>> Stashed changes
