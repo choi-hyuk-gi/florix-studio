@@ -8,8 +8,8 @@ export interface Props {
 }
 
 const {
-  title = "플로릭스 스튜디오 | 콘크리트 폴리싱 전문",
-  description = "콘크리트의 새로운 기준. 1일 완공, 원하는 색상과 규사로 시공하는 콘크리트 폴리싱 전문 스튜디오. 전국 시공 · 24시간 상담.",
+  title = "?뚮줈由?뒪 ?ㅽ뒠?붿삤 | 肄섑겕由ы듃 ?대━???꾨Ц",
+  description = "肄섑겕由ы듃???덈줈??湲곗?. 1???꾧났, ?먰븯???됱긽怨?洹쒖궗濡??쒓났?섎뒗 肄섑겕由ы듃 ?대━???꾨Ц ?ㅽ뒠?붿삤. ?꾧뎅 ?쒓났 쨌 24?쒓컙 ?곷떞.",
   image = "/og-image.svg",
 } = Astro.props;
 
@@ -18,21 +18,21 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site);
 const localBusinessSchema = {
   "@context": "https://schema.org",
   "@type": "LocalBusiness",
-  "name": "플로릭스 스튜디오",
+  "name": "?뚮줈由?뒪 ?ㅽ뒠?붿삤",
   "alternateName": "FLORIX STUDIO",
   "description": description,
   "url": "https://florixstudio.co.kr",
   "telephone": "+82-10-8930-2266",
-  "email": "contact@florixstudio.co.kr",
+  "email": "gurrl978@naver.com",
   "image": new URL(image, Astro.site).toString(),
-  "priceRange": "₩₩",
-  "areaServed": { "@type": "Country", "name": "대한민국" },
+  "priceRange": "?⒱궔",
+  "areaServed": { "@type": "Country", "name": "??쒕?援? },
   "openingHoursSpecification": {
     "@type": "OpeningHoursSpecification",
     "dayOfWeek": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"],
     "opens": "00:00",
     "closes": "23:59",
-    "description": "24시간 상담 가능"
+    "description": "24?쒓컙 ?곷떞 媛??
   },
   "sameAs": [
     "https://blog.naver.com/florix_studios",
@@ -54,8 +54,8 @@ const localBusinessSchema = {
     <link rel="canonical" href={canonicalURL} />
     <title>{title}</title>
     <meta name="description" content={description} />
-    <meta name="keywords" content="콘크리트 폴리싱, 콘크리트 광택, 바닥 폴리싱, 콘크리트 연마, 1일 양생, 양생 시공, 카페 바닥, 주택 바닥, 상업공간 바닥, 플로릭스 스튜디오, FLORIX STUDIO" />
-    <meta name="author" content="플로릭스 스튜디오" />
+    <meta name="keywords" content="肄섑겕由ы듃 ?대━?? 肄섑겕由ы듃 愿묓깮, 諛붾떏 ?대━?? 肄섑겕由ы듃 ?곕쭏, 1???묒깮, ?묒깮 ?쒓났, 移댄럹 諛붾떏, 二쇳깮 諛붾떏, ?곸뾽怨듦컙 諛붾떏, ?뚮줈由?뒪 ?ㅽ뒠?붿삤, FLORIX STUDIO" />
+    <meta name="author" content="?뚮줈由?뒪 ?ㅽ뒠?붿삤" />
     <meta name="robots" content="index, follow" />
     <meta name="Yeti" content="index, follow" />
     <meta name="naver-site-verification" content="41ea7350c15eb5579261ea35cf371c22a52fb617" />
@@ -65,7 +65,7 @@ const localBusinessSchema = {
     <meta property="og:description" content={description} />
     <meta property="og:image" content={new URL(image, Astro.site).toString()} />
     <meta property="og:locale" content="ko_KR" />
-    <meta property="og:site_name" content="플로릭스 스튜디오" />
+    <meta property="og:site_name" content="?뚮줈由?뒪 ?ㅽ뒠?붿삤" />
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content={title} />
     <meta name="twitter:description" content={description} />
