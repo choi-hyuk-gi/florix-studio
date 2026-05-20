@@ -43,13 +43,109 @@ const menu = [
       견적 문의 →
     </a>
 
-    <button class="md:hidden text-text" aria-label="메뉴 열기">
-      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+    <button id="mobile-menu-btn" class="md:hidden text-text relative z-50" aria-label="메뉴 열기" aria-expanded="false">
+      <svg id="icon-open" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
         <line x1="3" y1="6" x2="21" y2="6"/>
         <line x1="3" y1="12" x2="21" y2="12"/>
         <line x1="3" y1="18" x2="21" y2="18"/>
       </svg>
+      <svg id="icon-close" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" class="hidden">
+        <line x1="18" y1="6" x2="6" y2="18"/>
+        <line x1="6" y1="6" x2="18" y2="18"/>
+      </svg>
     </button>
 
   </div>
+
+  <div id="mobile-menu" class="md:hidden fixed inset-0 top-20 bg-bg z-40 hidden flex-col">
+    <div class="flex-1 overflow-y-auto px-6 py-12">
+      <ul class="space-y-6 mb-12">
+        {menu.map((item) => (
+          <li>
+            <a href={item.href} class="block text-3xl font-black text-text hover:text-accent transition-colors tracking-[-0.03em] mobile-link">
+              {item.label}
+            </a>
+          </li>
+        ))}
+      </ul>
+
+      <div class="pt-8 border-t border-line/60">
+        <div class="text-[10px] font-bold tracking-[0.25em] uppercase text-mood mb-5">FOLLOW</div>
+        <ul class="space-y-4">
+          <li>
+            <a href="https://blog.naver.com/florix_studios" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-3 text-base text-text hover:text-accent transition-colors">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M16.273 12.845 7.376 0H0v24h7.726V11.156L16.624 24H24V0h-7.727v12.845Z"/>
+              </svg>
+              네이버 블로그 <span class="text-mood/60">↗</span>
+            </a>
+          </li>
+          <li>
+            <a href="https://www.instagram.com/florix_studios" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-3 text-base text-text hover:text-accent transition-colors">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="2" y="2" width="20" height="20" rx="5" ry="5"/>
+                <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/>
+                <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/>
+              </svg>
+              Instagram <span class="text-mood/60">↗</span>
+            </a>
+          </li>
+          <li>
+            <a href="https://pf.kakao.com/_florixstudio" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-3 text-base text-text hover:text-accent transition-colors">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M12 3C6.477 3 2 6.477 2 10.8c0 2.79 1.86 5.24 4.66 6.65l-1.18 4.3c-.11.4.33.72.68.5L11.2 19c.27.02.53.04.8.04 5.523 0 10-3.477 10-7.8S17.523 3 12 3z"/>
+              </svg>
+              카카오톡 채널 <span class="text-mood/60">↗</span>
+            </a>
+          </li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="p-6 border-t border-line/60">
+      <a href="/#cta" class="block bg-text text-bg text-center py-4 font-bold tracking-wider mobile-link">
+        견적 문의 →
+      </a>
+    </div>
+  </div>
+
 </nav>
+
+<script is:inline>
+  (function() {
+    const btn = document.getElementById("mobile-menu-btn");
+    const menu = document.getElementById("mobile-menu");
+    const iconOpen = document.getElementById("icon-open");
+    const iconClose = document.getElementById("icon-close");
+    if (!btn || !menu) return;
+
+    function setOpen(open) {
+      if (open) {
+        menu.classList.remove("hidden");
+        menu.classList.add("flex");
+        iconOpen.classList.add("hidden");
+        iconClose.classList.remove("hidden");
+        btn.setAttribute("aria-expanded", "true");
+        document.body.style.overflow = "hidden";
+      } else {
+        menu.classList.add("hidden");
+        menu.classList.remove("flex");
+        iconOpen.classList.remove("hidden");
+        iconClose.classList.add("hidden");
+        btn.setAttribute("aria-expanded", "false");
+        document.body.style.overflow = "";
+      }
+    }
+
+    btn.addEventListener("click", function() {
+      const isOpen = !menu.classList.contains("hidden");
+      setOpen(!isOpen);
+    });
+
+    document.querySelectorAll(".mobile-link").forEach(function(link) {
+      link.addEventListener("click", function() {
+        setOpen(false);
+      });
+    });
+  })();
+</script>
