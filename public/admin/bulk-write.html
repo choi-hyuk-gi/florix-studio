@@ -2,70 +2,90 @@
 <html lang="ko">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
   <title>플로릭스 스튜디오 - 빠른 작성</title>
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
   <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; }
+    * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
     body {
       font-family: 'Noto Sans KR', sans-serif;
       background: #FAFAF8;
       color: #1A1A1A;
       min-height: 100vh;
+      -webkit-text-size-adjust: 100%;
     }
-    .container { max-width: 1200px; margin: 0 auto; padding: 24px; padding-bottom: 120px; }
+    .container { max-width: 1200px; margin: 0 auto; padding: 16px; padding-bottom: 140px; }
     .header {
       display: flex; justify-content: space-between; align-items: center;
-      padding-bottom: 24px; border-bottom: 1px solid #E5E5E0; margin-bottom: 32px;
-      position: sticky; top: 0; background: #FAFAF8; z-index: 100; padding-top: 16px;
+      padding: 12px 0; border-bottom: 1px solid #E5E5E0; margin-bottom: 16px;
+      position: sticky; top: 0; background: #FAFAF8; z-index: 100;
+      gap: 8px;
     }
-    .header h1 { font-size: 22px; font-weight: 800; letter-spacing: -0.02em; }
-    .header-actions { display: flex; gap: 12px; align-items: center; }
+    .header h1 { font-size: 18px; font-weight: 800; letter-spacing: -0.02em; }
+    .header-actions { display: flex; gap: 6px; align-items: center; flex-shrink: 0; }
+    .save-indicator {
+      font-size: 11px; color: #888; padding: 4px 8px;
+      background: #F0F0EB; border-radius: 12px; white-space: nowrap;
+    }
+    .save-indicator.saving { background: #FFF8E1; color: #F57C00; }
+    .save-indicator.saved { background: #E8F5E9; color: #2E7D32; }
     .btn {
-      padding: 10px 20px; border: none; border-radius: 6px;
+      padding: 10px 16px; border: none; border-radius: 6px;
       font-size: 14px; font-weight: 600; cursor: pointer;
       transition: all 0.15s; font-family: inherit; text-decoration: none;
       display: inline-flex; align-items: center; justify-content: center;
+      white-space: nowrap; min-height: 40px;
     }
     .btn-primary { background: #1A1A1A; color: #FAFAF8; }
     .btn-primary:hover:not(:disabled) { background: #B8956A; }
     .btn-primary:disabled { opacity: 0.4; cursor: not-allowed; }
     .btn-secondary { background: transparent; color: #666; border: 1px solid #E5E5E0; }
     .btn-secondary:hover { background: #F0F0EB; }
-    .btn-ghost { background: transparent; color: #666; border: 1px dashed #D5D5D0; padding: 12px 20px; width: 100%; font-size: 14px; border-radius: 6px; cursor: pointer; font-family: inherit; font-weight: 600; }
-    .btn-ghost:hover { border-color: #B8956A; color: #B8956A; background: #FFF8F0; }
+    .btn-danger { background: transparent; color: #C62828; border: 1px solid #FCC; }
+    .btn-danger:hover { background: #FFF5F5; }
+    .btn-sm { padding: 6px 12px; font-size: 12px; min-height: 32px; }
+
+    .restore-banner {
+      background: #FFF8E1; border: 1px solid #FFE082; border-radius: 8px;
+      padding: 14px 16px; margin-bottom: 16px; display: flex;
+      justify-content: space-between; align-items: center; gap: 12px;
+      flex-wrap: wrap;
+    }
+    .restore-banner p { font-size: 13px; color: #5D4037; flex: 1; min-width: 200px; }
+    .restore-banner .actions { display: flex; gap: 6px; }
 
     .meta-section {
-      background: white; padding: 24px; border-radius: 8px;
-      margin-bottom: 24px; border: 1px solid #E5E5E0;
+      background: white; padding: 16px; border-radius: 8px;
+      margin-bottom: 16px; border: 1px solid #E5E5E0;
     }
-    .meta-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    .meta-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
     .field { display: flex; flex-direction: column; gap: 6px; }
     .field label { font-size: 12px; font-weight: 600; color: #666; letter-spacing: 0.05em; }
     .field label .required { color: #C62828; }
     .field input, .field select {
-      padding: 10px 12px; border: 1px solid #E5E5E0; border-radius: 6px;
-      font-size: 14px; font-family: inherit; background: #FAFAF8;
+      padding: 12px; border: 1px solid #E5E5E0; border-radius: 6px;
+      font-size: 16px; /* 모바일에서 16px 이상이어야 자동 줌 안 됨 */
+      font-family: inherit; background: #FAFAF8; min-height: 44px;
     }
     .field input:focus, .field select:focus { outline: none; border-color: #B8956A; }
     .field input.invalid { border-color: #C62828; background: #FFF5F5; }
 
     .drop-zone {
       border: 2px dashed #D5D5D0; border-radius: 12px;
-      padding: 32px 24px; text-align: center; background: white;
-      cursor: pointer; transition: all 0.2s; margin-bottom: 24px;
+      padding: 28px 16px; text-align: center; background: white;
+      cursor: pointer; transition: all 0.2s; margin-bottom: 16px;
     }
     .drop-zone:hover, .drop-zone.dragging {
       border-color: #B8956A; background: #FFF8F0;
     }
-    .drop-zone-icon { font-size: 36px; margin-bottom: 8px; }
+    .drop-zone-icon { font-size: 32px; margin-bottom: 6px; }
     .drop-zone p { font-size: 14px; color: #666; }
     .drop-zone strong { color: #1A1A1A; font-weight: 700; }
     .drop-zone-hint { font-size: 11px; color: #999; margin-top: 4px; }
 
     .status {
-      padding: 14px 16px; border-radius: 8px; margin-bottom: 16px;
-      font-size: 14px; display: none;
+      padding: 12px 14px; border-radius: 8px; margin-bottom: 12px;
+      font-size: 13px; display: none;
     }
     .status.show { display: block; }
     .status.info { background: #E8F0FE; color: #1A56DB; }
@@ -73,19 +93,19 @@
     .status.error { background: #FEE; color: #C62828; }
 
     .login-card {
-      background: white; padding: 48px; border-radius: 12px;
+      background: white; padding: 32px 24px; border-radius: 12px;
       text-align: center; border: 1px solid #E5E5E0;
     }
-    .login-card h2 { font-size: 20px; margin-bottom: 12px; }
-    .login-card p { color: #666; margin-bottom: 24px; font-size: 14px; }
+    .login-card h2 { font-size: 18px; margin-bottom: 12px; }
+    .login-card p { color: #666; margin-bottom: 20px; font-size: 13px; }
 
     .blocks-area { min-height: 100px; }
-    .empty-state { text-align: center; padding: 48px 24px; color: #999; font-size: 14px; }
+    .empty-state { text-align: center; padding: 40px 16px; color: #999; font-size: 13px; line-height: 1.8; }
     .empty-state .kbd { background: #F0F0EB; border: 1px solid #E5E5E0; border-radius: 4px; padding: 2px 6px; font-family: monospace; font-size: 11px; color: #666; }
 
     .block {
       background: white; border: 1px solid #E5E5E0; border-radius: 8px;
-      margin-bottom: 12px; overflow: hidden; transition: all 0.15s;
+      margin-bottom: 8px; overflow: hidden; transition: all 0.15s;
       position: relative;
     }
     .block:hover { border-color: #B8956A; }
@@ -98,14 +118,15 @@
     .block-actions { display: flex; gap: 6px; }
     .icon-btn {
       background: white; border: 1px solid #E5E5E0; border-radius: 4px;
-      width: 28px; height: 28px; cursor: pointer; font-size: 14px;
+      width: 32px; height: 32px; cursor: pointer; font-size: 14px;
       display: inline-flex; align-items: center; justify-content: center;
       transition: all 0.15s; font-family: inherit;
+      -webkit-tap-highlight-color: rgba(184, 149, 106, 0.2);
     }
-    .icon-btn:hover { border-color: #B8956A; color: #B8956A; }
+    .icon-btn:hover, .icon-btn:active { border-color: #B8956A; color: #B8956A; }
     .icon-btn:disabled { opacity: 0.3; cursor: not-allowed; }
 
-    /* 블록 사이 인서트 버튼 */
+    /* 블록 사이 인서트 - 데스크탑은 호버, 모바일은 항상 표시 */
     .block-insert {
       height: 8px; position: relative; opacity: 0; transition: opacity 0.15s;
       margin: -4px 0; z-index: 5;
@@ -121,7 +142,7 @@
       padding: 2px 8px; border-radius: 12px; border: 1px solid #B8956A;
     }
     .block-insert-buttons button {
-      background: none; border: none; cursor: pointer; padding: 2px 8px;
+      background: none; border: none; cursor: pointer; padding: 4px 10px;
       font-size: 12px; color: #B8956A; font-family: inherit; font-weight: 600;
       border-radius: 4px;
     }
@@ -131,25 +152,30 @@
       display: flex; flex-wrap: wrap; gap: 4px; padding: 8px;
       background: #F8F8F4; border-bottom: 1px solid #F0F0EB;
       align-items: center;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
     }
     .tool-btn {
       background: white; border: 1px solid #E5E5E0; border-radius: 4px;
-      padding: 4px 10px; cursor: pointer; font-size: 13px;
-      font-family: inherit; transition: all 0.1s; min-width: 32px;
-      height: 28px;
+      padding: 6px 12px; cursor: pointer; font-size: 13px;
+      font-family: inherit; transition: all 0.1s; min-width: 36px;
+      min-height: 36px;
+      -webkit-tap-highlight-color: rgba(184, 149, 106, 0.2);
     }
-    .tool-btn:hover { border-color: #B8956A; }
-    .tool-divider { width: 1px; background: #E5E5E0; height: 20px; margin: 0 4px; }
-    .color-btn { width: 28px; height: 28px; padding: 0; border-radius: 4px; border: 1px solid #E5E5E0; }
+    .tool-btn:hover, .tool-btn:active { border-color: #B8956A; }
+    .tool-divider { width: 1px; background: #E5E5E0; height: 20px; margin: 0 4px; flex-shrink: 0; }
+    .color-btn { width: 32px; height: 32px; padding: 0; border-radius: 4px; border: 1px solid #E5E5E0; }
     .text-content {
       padding: 16px; min-height: 120px; outline: none;
-      font-size: 15px; line-height: 1.8;
+      font-size: 16px; line-height: 1.8;
+      -webkit-user-select: text;
+      user-select: text;
     }
     .text-content:empty:before {
       content: attr(data-placeholder); color: #BBB;
     }
-    .text-content h2 { font-size: 1.5em; font-weight: 800; margin: 0.5em 0; }
-    .text-content h3 { font-size: 1.25em; font-weight: 700; margin: 0.5em 0; }
+    .text-content h2 { font-size: 1.4em; font-weight: 800; margin: 0.5em 0; }
+    .text-content h3 { font-size: 1.2em; font-weight: 700; margin: 0.5em 0; }
     .text-content ul { padding-left: 1.5em; margin: 0.5em 0; }
 
     .image-block-content { padding: 0; }
@@ -160,10 +186,14 @@
     .image-meta {
       padding: 10px 14px; display: flex; justify-content: space-between;
       align-items: center; font-size: 12px; color: #888; background: #FAFAF8;
+      gap: 8px;
+    }
+    .image-meta span:first-child {
+      overflow: hidden; text-overflow: ellipsis; white-space: nowrap; flex: 1; min-width: 0;
     }
     .image-caption-input {
-      width: 100%; padding: 10px 14px; border: none; border-top: 1px solid #F0F0EB;
-      font-size: 13px; font-family: inherit; background: white;
+      width: 100%; padding: 12px 14px; border: none; border-top: 1px solid #F0F0EB;
+      font-size: 14px; font-family: inherit; background: white;
     }
     .image-caption-input:focus { outline: none; background: #FFF8F0; }
     .upload-progress {
@@ -176,25 +206,27 @@
     .summary-bar {
       position: fixed; bottom: 0; left: 0; right: 0;
       background: white; border-top: 1px solid #E5E5E0;
-      padding: 12px 24px; display: flex; justify-content: space-between;
+      padding: 10px 16px; display: flex; justify-content: space-between;
       align-items: center; z-index: 50; box-shadow: 0 -4px 12px rgba(0,0,0,0.04);
+      gap: 8px;
     }
-    .summary-info { font-size: 13px; color: #666; }
+    .summary-info { font-size: 12px; color: #666; flex: 1; min-width: 0; }
     .summary-info strong { color: #1A1A1A; font-weight: 700; }
-    .summary-actions { display: flex; gap: 8px; align-items: center; }
+    .summary-actions { display: flex; gap: 6px; align-items: center; flex-shrink: 0; }
 
     /* 플로팅 추가 버튼 (FAB) */
     .fab-container {
-      position: fixed; right: 24px; bottom: 80px; z-index: 60;
+      position: fixed; right: 16px; bottom: 80px; z-index: 60;
     }
     .fab-main {
       width: 56px; height: 56px; border-radius: 50%;
       background: #1A1A1A; color: white; border: none; cursor: pointer;
-      font-size: 24px; box-shadow: 0 4px 16px rgba(0,0,0,0.2);
+      font-size: 28px; box-shadow: 0 4px 16px rgba(0,0,0,0.2);
       display: flex; align-items: center; justify-content: center;
       transition: all 0.2s; font-family: inherit;
+      -webkit-tap-highlight-color: rgba(184, 149, 106, 0.4);
     }
-    .fab-main:hover { background: #B8956A; transform: scale(1.05); }
+    .fab-main:hover, .fab-main:active { background: #B8956A; }
     .fab-main.open { transform: rotate(45deg); }
     .fab-menu {
       position: absolute; bottom: 70px; right: 0;
@@ -205,13 +237,13 @@
     .fab-menu.open { opacity: 1; pointer-events: auto; transform: translateY(0); }
     .fab-item {
       background: white; border: 1px solid #E5E5E0; border-radius: 24px;
-      padding: 10px 16px; cursor: pointer; font-size: 13px; font-weight: 600;
+      padding: 12px 20px; cursor: pointer; font-size: 14px; font-weight: 600;
       box-shadow: 0 2px 8px rgba(0,0,0,0.08); white-space: nowrap;
       display: flex; align-items: center; gap: 8px;
-      font-family: inherit; transition: all 0.15s;
+      font-family: inherit; transition: all 0.15s; min-height: 44px;
     }
-    .fab-item:hover { border-color: #B8956A; color: #B8956A; transform: translateX(-4px); }
-    .fab-item-icon { font-size: 16px; }
+    .fab-item:hover, .fab-item:active { border-color: #B8956A; color: #B8956A; }
+    .fab-item-icon { font-size: 18px; }
 
     .emoji-picker {
       position: absolute; background: white; border: 1px solid #E5E5E0;
@@ -220,40 +252,88 @@
     }
     .emoji-picker.show { display: block; }
     .emoji-picker button {
-      background: none; border: none; font-size: 20px; padding: 4px 6px;
-      cursor: pointer; border-radius: 4px;
+      background: none; border: none; font-size: 22px; padding: 6px 8px;
+      cursor: pointer; border-radius: 4px; min-width: 40px; min-height: 40px;
     }
-    .emoji-picker button:hover { background: #F0F0EB; }
+    .emoji-picker button:hover, .emoji-picker button:active { background: #F0F0EB; }
 
     .modal {
       position: fixed; inset: 0; background: rgba(0,0,0,0.5);
       display: none; align-items: center; justify-content: center; z-index: 1000;
+      padding: 16px;
     }
     .modal.show { display: flex; }
     .modal-content {
-      background: white; border-radius: 12px; padding: 32px;
-      max-width: 500px; width: 90%; max-height: 80vh; overflow-y: auto;
+      background: white; border-radius: 12px; padding: 24px;
+      max-width: 500px; width: 100%; max-height: 80vh; overflow-y: auto;
     }
     .modal-content h2 { font-size: 18px; margin-bottom: 16px; }
     .modal-content p { font-size: 14px; color: #666; margin-bottom: 12px; line-height: 1.6; }
-    .modal-actions { display: flex; gap: 8px; justify-content: flex-end; margin-top: 24px; }
+    .modal-actions { display: flex; gap: 8px; justify-content: flex-end; margin-top: 24px; flex-wrap: wrap; }
     .publish-log {
       background: #F8F8F4; padding: 12px; border-radius: 6px;
-      font-family: 'Courier New', monospace; font-size: 12px;
+      font-family: 'Courier New', monospace; font-size: 11px;
       max-height: 300px; overflow-y: auto; margin: 12px 0;
+      word-break: break-all;
     }
     .publish-log .log-line { padding: 2px 0; }
     .publish-log .log-success { color: #2E7D32; }
     .publish-log .log-error { color: #C62828; }
     .publish-log .log-info { color: #1A56DB; }
+
+    /* ============ 모바일 대응 ============ */
+    @media (max-width: 768px) {
+      .container { padding: 12px; padding-bottom: 140px; }
+      .header { padding: 10px 0; }
+      .header h1 { font-size: 16px; }
+      .save-indicator { display: none; } /* 모바일에서는 너무 좁아서 숨김 */
+      .meta-grid { grid-template-columns: 1fr; gap: 10px; }
+      .meta-section { padding: 14px; }
+      .drop-zone { padding: 20px 12px; }
+      .drop-zone-icon { font-size: 28px; }
+      .drop-zone p { font-size: 13px; }
+
+      /* 텍스트 툴바를 가로 스크롤 가능하게 */
+      .text-toolbar {
+        flex-wrap: nowrap;
+        overflow-x: auto;
+        scrollbar-width: thin;
+      }
+      .text-toolbar::-webkit-scrollbar { height: 4px; }
+
+      /* 모바일에서 블록 사이 인서트는 항상 살짝 보이게 */
+      .block-insert { opacity: 0.6; height: 24px; }
+      .block-insert:active { opacity: 1; height: 32px; }
+      .block-insert-buttons button { padding: 6px 12px; }
+
+      /* 헤더 발행 버튼 숨김 (하단 바에만) */
+      .header .btn-primary { display: none; }
+      .header-actions .save-indicator { display: none; }
+
+      .summary-bar { padding: 10px 12px; }
+      .summary-info { font-size: 11px; }
+
+      .fab-container { right: 12px; bottom: 76px; }
+      .fab-main { width: 52px; height: 52px; font-size: 26px; }
+    }
+
+    /* 매우 작은 화면 (아이폰 SE 등) */
+    @media (max-width: 380px) {
+      .container { padding: 8px; }
+      .header h1 { font-size: 15px; }
+      .btn { padding: 8px 12px; font-size: 13px; }
+      .restore-banner { flex-direction: column; align-items: stretch; }
+      .restore-banner .actions { justify-content: flex-end; }
+    }
   </style>
 </head>
 <body>
   <div class="container">
     <div class="header">
-      <h1>빠른 작성 — 시공 사례</h1>
+      <h1>빠른 작성</h1>
       <div class="header-actions">
-        <a href="/admin/" class="btn btn-secondary">기존 CMS로</a>
+        <span class="save-indicator" id="saveIndicator">●  저장됨</span>
+        <a href="/admin/" class="btn btn-secondary btn-sm">CMS</a>
         <button class="btn btn-primary" id="publishBtn" disabled>발행</button>
       </div>
     </div>
@@ -265,6 +345,14 @@
     </div>
 
     <div id="editor" style="display: none;">
+      <div id="restoreBanner" class="restore-banner" style="display: none;">
+        <p>📝 <strong>이전에 작성하던 글이 있어요.</strong><br><span id="restoreInfo" style="font-size: 12px;"></span></p>
+        <div class="actions">
+          <button class="btn btn-secondary btn-sm" onclick="discardDraft()">새로 시작</button>
+          <button class="btn btn-primary btn-sm" onclick="restoreDraft()">이어서 작성</button>
+        </div>
+      </div>
+
       <div id="status" class="status"></div>
 
       <div class="meta-section">
@@ -308,21 +396,20 @@
 
       <div class="drop-zone" id="dropZone">
         <div class="drop-zone-icon">📷</div>
-        <p><strong>여기에 사진을 드래그</strong>하거나 클릭해서 선택</p>
+        <p><strong>여기에 사진을 드래그</strong>하거나 탭해서 선택</p>
         <p class="drop-zone-hint">여러 장 한 번에 가능 · 자동으로 순서대로 추가됨</p>
         <input type="file" id="fileInput" multiple accept="image/*" style="display: none;">
       </div>
 
       <div class="blocks-area" id="blocksArea">
         <div class="empty-state" id="emptyState">
-          위 영역에 사진을 드래그하거나, 오른쪽 아래 <strong>＋ 버튼</strong>으로 시작하세요.<br>
-          <span style="font-size: 12px; color: #BBB;">단축키: <span class="kbd">Ctrl+Shift+T</span> 텍스트 · <span class="kbd">Ctrl+Shift+I</span> 사진</span>
+          위에 사진을 드래그하거나, 오른쪽 아래 <strong>＋ 버튼</strong>으로 시작하세요.<br>
+          <span style="font-size: 11px; color: #BBB;">단축키: <span class="kbd">Ctrl+Shift+T</span> 텍스트 · <span class="kbd">Ctrl+Shift+I</span> 사진</span>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- 플로팅 추가 버튼 -->
   <div class="fab-container" id="fabContainer" style="display: none;">
     <div class="fab-menu" id="fabMenu">
       <button class="fab-item" onclick="addTextBlock(); toggleFab();">
@@ -337,8 +424,8 @@
 
   <div class="summary-bar" id="summaryBar" style="display: none;">
     <div class="summary-info">
-      <span><strong id="blockCount">0</strong>개 블록</span>
-      <span style="margin-left: 16px;">사진 <strong id="imageCount">0</strong>장</span>
+      <span><strong id="blockCount">0</strong>블록 · 사진 <strong id="imageCount">0</strong></span>
+      <span id="saveStatus" style="margin-left: 8px; color: #888;"></span>
     </div>
     <div class="summary-actions">
       <button class="btn btn-primary" id="publishBtn2" disabled>발행</button>
@@ -363,6 +450,8 @@
     const REPO = 'choi-hyuk-gi/florix-studio';
     const BRANCH = 'main';
     const API_BASE = 'https://api.github.com';
+    const DRAFT_KEY = 'florix-bulk-write-draft-v1';
+    const SAVE_INTERVAL_MS = 3000;
 
     function getToken() {
       try {
@@ -390,6 +479,9 @@
       document.getElementById('publishBtn2').disabled = false;
       const today = new Date().toISOString().split('T')[0];
       document.getElementById('date').value = today;
+      
+      // 저장된 임시 글 확인
+      checkSavedDraft();
     }
 
     function showStatus(type, msg) {
@@ -399,12 +491,10 @@
       if (type === 'success') setTimeout(function() { el.className = 'status'; }, 4000);
     }
 
-    // FAB 토글
     function toggleFab() {
       document.getElementById('fabMain').classList.toggle('open');
       document.getElementById('fabMenu').classList.toggle('open');
     }
-    // 바깥 클릭 시 닫기
     document.addEventListener('click', function(e) {
       if (!e.target.closest('.fab-container')) {
         document.getElementById('fabMain').classList.remove('open');
@@ -415,10 +505,182 @@
     let blocks = [];
     let blockIdCounter = 0;
     let activeTextBlock = null;
-    let insertAtIndex = null; // null = 끝에 추가, 숫자 = 그 위치에 끼워넣기
+    let insertAtIndex = null;
+    let saveTimer = null;
+    let lastSaveTime = null;
 
     function nextId() { return 'b' + (++blockIdCounter); }
 
+    // ============ 임시 저장 (자동) ============
+    function setSaveIndicator(state, text) {
+      const el = document.getElementById('saveIndicator');
+      const elMobile = document.getElementById('saveStatus');
+      el.className = 'save-indicator ' + state;
+      el.textContent = text;
+      if (elMobile) elMobile.textContent = text;
+    }
+
+    async function saveDraft() {
+      if (!TOKEN) return;
+      try {
+        setSaveIndicator('saving', '● 저장 중...');
+        
+        const meta = {
+          title: document.getElementById('title').value,
+          location: document.getElementById('location').value,
+          area: document.getElementById('area').value,
+          category: document.getElementById('category').value,
+          date: document.getElementById('date').value,
+          duration: document.getElementById('duration').value,
+          specs: document.getElementById('specs').value
+        };
+
+        // 사진은 dataUrl 그대로 저장 (이미 업로드된 건 githubPath 유지)
+        // 단, 용량이 클 수 있으므로 업로드된 사진은 dataUrl 제거
+        const blocksToSave = blocks.map(function(b) {
+          if (b.type === 'text') {
+            return { id: b.id, type: 'text', content: b.content };
+          } else if (b.type === 'image') {
+            return {
+              id: b.id, type: 'image',
+              filename: b.filename,
+              caption: b.caption,
+              uploaded: b.uploaded,
+              githubPath: b.githubPath,
+              // 업로드 안 된 사진만 dataUrl 저장 (재시작 후 다시 업로드 가능하게)
+              dataUrl: b.uploaded ? null : b.dataUrl
+            };
+          }
+        });
+
+        const draft = {
+          meta: meta,
+          blocks: blocksToSave,
+          savedAt: new Date().toISOString()
+        };
+
+        // 용량 체크 (localStorage 한도: 보통 5MB)
+        const json = JSON.stringify(draft);
+        const sizeMB = (json.length / 1024 / 1024).toFixed(2);
+        
+        if (json.length > 4 * 1024 * 1024) {
+          // 4MB 초과 시 dataUrl 제외하고 메타만 저장
+          blocksToSave.forEach(function(b) { if (b.type === 'image') b.dataUrl = null; });
+          draft.blocks = blocksToSave;
+          draft.warning = 'large';
+          localStorage.setItem(DRAFT_KEY, JSON.stringify(draft));
+          setSaveIndicator('saved', '● 저장됨 (사진 제외)');
+        } else {
+          localStorage.setItem(DRAFT_KEY, json);
+          setSaveIndicator('saved', '● 저장됨 (' + sizeMB + 'MB)');
+        }
+        
+        lastSaveTime = new Date();
+      } catch (err) {
+        console.error('Save failed:', err);
+        setSaveIndicator('', '● 저장 실패');
+      }
+    }
+
+    function scheduleSave() {
+      if (saveTimer) clearTimeout(saveTimer);
+      setSaveIndicator('saving', '● 변경됨...');
+      saveTimer = setTimeout(saveDraft, SAVE_INTERVAL_MS);
+    }
+
+    function checkSavedDraft() {
+      try {
+        const stored = localStorage.getItem(DRAFT_KEY);
+        if (!stored) return;
+        const draft = JSON.parse(stored);
+        if (!draft.blocks || draft.blocks.length === 0) {
+          // 비어있는 초안 - 메타 정보만 있다면 표시
+          const hasMetaContent = draft.meta && (draft.meta.title || draft.meta.location);
+          if (!hasMetaContent) return;
+        }
+        const savedAt = new Date(draft.savedAt);
+        const minsAgo = Math.floor((Date.now() - savedAt.getTime()) / 60000);
+        const timeText = minsAgo < 1 ? '방금 전'
+          : minsAgo < 60 ? minsAgo + '분 전'
+          : minsAgo < 1440 ? Math.floor(minsAgo / 60) + '시간 전'
+          : Math.floor(minsAgo / 1440) + '일 전';
+        
+        let info = '제목: ' + (draft.meta.title || '(제목 없음)');
+        info += ' · ' + (draft.blocks ? draft.blocks.length : 0) + '개 블록';
+        info += ' · ' + timeText + ' 저장';
+        if (draft.warning === 'large') info += ' · 사진 일부는 다시 추가 필요';
+        
+        document.getElementById('restoreInfo').textContent = info;
+        document.getElementById('restoreBanner').style.display = 'flex';
+      } catch (e) {
+        console.error('Check draft failed:', e);
+      }
+    }
+
+    function restoreDraft() {
+      try {
+        const stored = localStorage.getItem(DRAFT_KEY);
+        if (!stored) return;
+        const draft = JSON.parse(stored);
+        
+        // 메타 복원
+        if (draft.meta) {
+          ['title','location','area','category','date','duration','specs'].forEach(function(k) {
+            if (draft.meta[k] !== undefined) {
+              document.getElementById(k).value = draft.meta[k];
+            }
+          });
+        }
+        
+        // 블록 복원
+        blocks = [];
+        blockIdCounter = 0;
+        if (draft.blocks) {
+          draft.blocks.forEach(function(b) {
+            const id = nextId();
+            if (b.type === 'text') {
+              blocks.push({ id: id, type: 'text', content: b.content || '' });
+            } else if (b.type === 'image') {
+              blocks.push({
+                id: id, type: 'image',
+                filename: b.filename || 'image.jpg',
+                caption: b.caption || '',
+                uploaded: b.uploaded || false,
+                githubPath: b.githubPath || null,
+                dataUrl: b.dataUrl || (b.githubPath ? b.githubPath : null),
+                file: null, // 파일 객체는 복원 불가
+                missingFile: !b.uploaded && !b.dataUrl // 재업로드 필요 표시
+              });
+            }
+          });
+        }
+        
+        renderBlocks();
+        updateSummary();
+        document.getElementById('restoreBanner').style.display = 'none';
+        showStatus('success', '이전 작성 내용을 불러왔습니다.');
+        setSaveIndicator('saved', '● 복원됨');
+      } catch (e) {
+        console.error('Restore failed:', e);
+        showStatus('error', '복원 실패: ' + e.message);
+      }
+    }
+
+    function discardDraft() {
+      if (!confirm('저장된 임시 글을 삭제하고 새로 시작할까요?')) return;
+      localStorage.removeItem(DRAFT_KEY);
+      document.getElementById('restoreBanner').style.display = 'none';
+      showStatus('info', '새로 시작합니다.');
+    }
+
+    // 메타 입력 변경 감지
+    ['title','location','area','category','date','duration','specs'].forEach(function(id) {
+      const el = document.getElementById(id);
+      if (el) el.addEventListener('input', scheduleSave);
+      if (el) el.addEventListener('change', scheduleSave);
+    });
+
+    // ============ 블록 관리 ============
     function updateSummary() {
       const imgCount = blocks.filter(function(b) { return b.type === 'image'; }).length;
       document.getElementById('blockCount').textContent = blocks.length;
@@ -442,6 +704,7 @@
       insertBlock(block);
       renderBlocks();
       updateSummary();
+      scheduleSave();
       setTimeout(function() {
         const el = document.querySelector('#' + id + ' .text-content');
         if (el) {
@@ -466,6 +729,7 @@
         insertBlock(block);
         renderBlocks();
         updateSummary();
+        scheduleSave();
       };
       reader.readAsDataURL(file);
     }
@@ -484,6 +748,7 @@
       blocks = blocks.filter(function(b) { return b.id !== id; });
       renderBlocks();
       updateSummary();
+      scheduleSave();
     }
 
     function moveBlock(id, dir) {
@@ -494,16 +759,23 @@
       blocks[idx] = blocks[newIdx];
       blocks[newIdx] = tmp;
       renderBlocks();
+      scheduleSave();
     }
 
     function updateTextBlock(id, html) {
       const b = blocks.find(function(b) { return b.id === id; });
-      if (b) b.content = html;
+      if (b) {
+        b.content = html;
+        scheduleSave();
+      }
     }
 
     function updateCaption(id, caption) {
       const b = blocks.find(function(b) { return b.id === id; });
-      if (b) b.caption = caption;
+      if (b) {
+        b.caption = caption;
+        scheduleSave();
+      }
     }
 
     function escapeHtml(s) {
@@ -513,10 +785,9 @@
     function renderBlocks() {
       const area = document.getElementById('blocksArea');
       if (blocks.length === 0) {
-        area.innerHTML = '<div class="empty-state" id="emptyState">위 영역에 사진을 드래그하거나, 오른쪽 아래 <strong>＋ 버튼</strong>으로 시작하세요.<br><span style="font-size: 12px; color: #BBB;">단축키: <span class="kbd">Ctrl+Shift+T</span> 텍스트 · <span class="kbd">Ctrl+Shift+I</span> 사진</span></div>';
+        area.innerHTML = '<div class="empty-state" id="emptyState">위에 사진을 드래그하거나, 오른쪽 아래 <strong>＋ 버튼</strong>으로 시작하세요.<br><span style="font-size: 11px; color: #BBB;">단축키: <span class="kbd">Ctrl+Shift+T</span> 텍스트 · <span class="kbd">Ctrl+Shift+I</span> 사진</span></div>';
         return;
       }
-      // 블록 사이사이에 인서트 영역 넣기
       let html = '';
       blocks.forEach(function(b, i) {
         html += renderInsertZone(i);
@@ -592,11 +863,13 @@
       } else if (b.type === 'image') {
         const status = b.uploaded ? '<span style="color:#2E7D32;">✓ 업로드됨</span>'
           : b.uploading ? '<span style="color:#1A56DB;">업로드 중...</span>'
+          : b.missingFile ? '<span style="color:#C62828;">⚠ 사진 재첨부 필요</span>'
           : '<span style="color:#888;">대기 중</span>';
         const progress = b.uploading ?
           '<div class="upload-progress"><div class="upload-progress-bar" style="width: ' + (b.progress || 0) + '%"></div></div>'
           : '';
         const shortName = b.filename.length > 40 ? b.filename.slice(0, 40) + '...' : b.filename;
+        const imgSrc = b.dataUrl || b.githubPath || '';
         return '' +
           '<div class="block" id="' + b.id + '">' +
             '<div class="block-header">' +
@@ -604,7 +877,7 @@
               '<div class="block-actions">' + moveButtons + '</div>' +
             '</div>' +
             '<div class="image-block-content">' +
-              '<img src="' + b.dataUrl + '" class="image-preview" alt="">' +
+              (imgSrc ? '<img src="' + imgSrc + '" class="image-preview" alt="">' : '<div style="padding:40px;text-align:center;color:#999;">이미지 미리보기 없음</div>') +
               progress +
               '<div class="image-meta">' +
                 '<span title="' + escapeHtml(b.filename) + '">' + escapeHtml(shortName) + '</span>' +
@@ -661,19 +934,31 @@
     document.addEventListener('dragover', function(e) { e.preventDefault(); });
     document.addEventListener('drop', function(e) { e.preventDefault(); });
 
-    // 단축키
     document.addEventListener('keydown', function(e) {
-      if (e.ctrlKey && e.shiftKey && e.key === 'T') {
+      if (e.ctrlKey && e.shiftKey && (e.key === 'T' || e.key === 't')) {
         e.preventDefault();
         addTextBlock();
       }
-      if (e.ctrlKey && e.shiftKey && e.key === 'I') {
+      if (e.ctrlKey && e.shiftKey && (e.key === 'I' || e.key === 'i')) {
         e.preventDefault();
         fileInput.click();
       }
+      // Ctrl+S로 수동 저장
+      if (e.ctrlKey && (e.key === 's' || e.key === 'S')) {
+        e.preventDefault();
+        saveDraft();
+      }
     });
 
-    // 발행 로직
+    // 페이지 떠날 때 마지막 저장
+    window.addEventListener('beforeunload', function(e) {
+      if (saveTimer) {
+        clearTimeout(saveTimer);
+        saveDraft();
+      }
+    });
+
+    // ============ 발행 ============
     function log(type, msg) {
       const logEl = document.getElementById('publishLog');
       const line = document.createElement('div');
@@ -709,6 +994,14 @@
       if (!location) { showStatus('error', '지역을 입력해주세요.'); return false; }
       if (!date) { showStatus('error', '시공일을 선택해주세요.'); return false; }
       if (blocks.length === 0) { showStatus('error', '최소 하나의 블록(텍스트 또는 사진)이 필요합니다.'); return false; }
+      
+      // 재첨부 필요한 사진 체크
+      const missing = blocks.filter(function(b) { return b.type === 'image' && b.missingFile; });
+      if (missing.length > 0) {
+        showStatus('error', '사진 ' + missing.length + '장이 재첨부가 필요합니다. (빨간색 경고 표시)');
+        return false;
+      }
+      
       return true;
     }
 
@@ -897,25 +1190,32 @@
         log('success', '✓ 글 저장 완료');
         log('info', '사이트 빌드 대기 중... (2-3분 후 반영)');
 
+        // 발행 성공 → 임시 저장 삭제
+        localStorage.removeItem(DRAFT_KEY);
+        log('info', '임시 저장 데이터 정리됨');
+
         document.getElementById('modalTitle').textContent = '✓ 발행 완료!';
         document.getElementById('modalMessage').textContent = '2-3분 후 사이트에 반영됩니다. Cloudflare가 자동으로 빌드합니다.';
         document.getElementById('modalActions').style.display = 'flex';
         const viewBtn = document.getElementById('viewPostBtn');
         viewBtn.href = '/works/' + slug + '/';
-        viewBtn.textContent = '글 페이지로 (배포 후)';
+        viewBtn.textContent = '글 페이지로';
         viewBtn.style.display = 'inline-flex';
 
       } catch (err) {
         console.error(err);
         log('error', '오류: ' + err.message);
         document.getElementById('modalTitle').textContent = '✗ 발행 실패';
-        document.getElementById('modalMessage').textContent = '오류가 발생했습니다. 로그를 확인하세요.';
+        document.getElementById('modalMessage').textContent = '오류가 발생했습니다. 로그를 확인하세요. (작성 내용은 자동 저장되어 있습니다)';
         document.getElementById('modalActions').style.display = 'flex';
       }
     }
 
     document.getElementById('publishBtn').addEventListener('click', publish);
     document.getElementById('publishBtn2').addEventListener('click', publish);
+
+    // 초기 저장 상태 표시
+    setSaveIndicator('saved', '● 준비됨');
   </script>
 </body>
 </html>
