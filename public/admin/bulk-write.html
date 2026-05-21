@@ -120,6 +120,36 @@ body{font-family:'Noto Sans KR',sans-serif;background:#FAFAF8;color:#1A1A1A;min-
 .login-card{background:white;padding:40px 28px;border-radius:12px;text-align:center;border:1px solid #E5E5E0;max-width:440px;margin:60px auto}
 .login-card h2{font-size:19px;margin-bottom:10px}
 .login-card p{color:#666;margin-bottom:22px;font-size:13px;line-height:1.6}
+.thumb-section{margin-top:18px;padding-top:18px;border-top:1px dashed #E5E5E0}
+.thumb-section>label{font-size:11px;font-weight:700;color:#666;letter-spacing:.05em;text-transform:uppercase;display:block;margin-bottom:8px}
+.thumb-section .hint{font-size:11px;color:#999;margin-bottom:10px}
+.thumb-box{position:relative;aspect-ratio:4/5;max-width:240px;background:#FAFAF8;border:2px dashed #D5D5D0;border-radius:10px;overflow:hidden;cursor:pointer;transition:all .15s}
+.thumb-box:hover{border-color:#B8956A;background:#FFF8F0}
+.thumb-box.has-image{border-style:solid;border-color:#E29A4A;background:#1A1A1A}
+.thumb-empty{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:14px}
+.thumb-empty .icon{font-size:36px;margin-bottom:6px;opacity:.4}
+.thumb-empty p{font-size:12px;color:#888;margin-bottom:10px;line-height:1.5}
+.thumb-empty .pick-btn{background:white;border:1px solid #B8956A;color:#B8956A;padding:6px 14px;border-radius:5px;font-size:12px;cursor:pointer;font-family:inherit;font-weight:700}
+.thumb-img{width:100%;height:100%;object-fit:cover;display:block}
+.thumb-actions{position:absolute;bottom:8px;right:8px;display:flex;gap:6px}
+.thumb-actions button{background:rgba(0,0,0,.7);color:white;border:none;padding:5px 11px;border-radius:4px;font-size:11px;cursor:pointer;font-family:inherit;font-weight:600;backdrop-filter:blur(8px)}
+.thumb-actions button:hover{background:rgba(0,0,0,.9)}
+.thumb-actions .del{background:rgba(198,40,40,.85)}
+.thumb-actions .del:hover{background:rgba(198,40,40,1)}
+.thumb-options{display:grid;grid-template-columns:repeat(auto-fill,minmax(110px,1fr));gap:10px}
+.thumb-option{position:relative;aspect-ratio:1;background:#F0F0EB;border:2px solid transparent;border-radius:8px;overflow:hidden;cursor:pointer;transition:all .15s}
+.thumb-option:hover{border-color:#B8956A;transform:translateY(-2px)}
+.thumb-option.selected{border-color:#E29A4A;box-shadow:0 0 0 3px rgba(226,154,74,.2)}
+.thumb-option img{width:100%;height:100%;object-fit:cover;display:block}
+.thumb-option-current{position:absolute;top:5px;left:5px;background:#E29A4A;color:white;padding:3px 7px;border-radius:4px;font-size:10px;font-weight:700;letter-spacing:.04em}
+.thumb-modal-tabs{display:flex;gap:6px;margin-bottom:14px;border-bottom:1px solid #E5E5E0;padding-bottom:0}
+.thumb-modal-tabs button{background:transparent;border:none;padding:9px 16px;font-size:13px;cursor:pointer;font-family:inherit;font-weight:600;color:#888;border-bottom:2px solid transparent;margin-bottom:-1px}
+.thumb-modal-tabs button.active{color:#1A1A1A;border-bottom-color:#1A1A1A}
+.upload-thumb-zone{border:2px dashed #D5D5D0;border-radius:10px;padding:36px 20px;text-align:center;background:#FAFAF8;cursor:pointer;transition:all .2s}
+.upload-thumb-zone:hover{border-color:#B8956A;background:#FFF8F0}
+.upload-thumb-zone .icon{font-size:40px;margin-bottom:8px;opacity:.5}
+.upload-thumb-zone p{font-size:13px;color:#666;margin-bottom:4px}
+.upload-thumb-zone .small{font-size:11px;color:#999}
 @media (max-width:768px){
   .container{padding:14px;padding-bottom:140px}
   .header{padding:10px 0}
@@ -197,6 +227,18 @@ body{font-family:'Noto Sans KR',sans-serif;background:#FAFAF8;color:#1A1A1A;min-
         <div class="field"><label>시공 소요시간</label><input id="duration" value="1일 완공"></div>
         <div class="field" style="grid-column:1/-1"><label>사용 컬러/규사 (선택)</label><input id="specs" placeholder="예: 베이지 톤 / 1500방 폴리싱"></div>
       </div>
+      
+      <div class="thumb-section">
+        <label>대표 사진 (메인 카드 노출)</label>
+        <p class="hint">시공사례 목록과 메인 페이지 카드에 표시되는 사진이에요</p>
+        <div class="thumb-box" id="thumbBox" onclick="openThumbModal()">
+          <div class="thumb-empty">
+            <div class="icon">📷</div>
+            <p>대표 사진을 선택하세요</p>
+            <button class="pick-btn" onclick="event.stopPropagation();openThumbModal()">사진 선택</button>
+          </div>
+        </div>
+      </div>
     </div>
 
     <div class="dropzone" id="dropzone">
@@ -245,6 +287,33 @@ body{font-family:'Noto Sans KR',sans-serif;background:#FAFAF8;color:#1A1A1A;min-
       </p>
       <div id="worksList" class="works-grid">
         <div style="grid-column:1/-1;text-align:center;padding:40px;color:#999;font-size:13px">목록 불러오는 중...</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 대표 사진 선택 모달 -->
+<div class="modal-bg" id="thumbModal">
+  <div class="modal">
+    <div class="modal-header">
+      <h2>대표 사진 선택</h2>
+      <button class="modal-close" onclick="closeThumbModal()">×</button>
+    </div>
+    <div class="modal-body">
+      <div class="thumb-modal-tabs">
+        <button id="tabExisting" class="active" onclick="switchThumbTab('existing')">📦 추가된 사진에서 선택</button>
+        <button id="tabUpload" onclick="switchThumbTab('upload')">📤 새 사진 업로드</button>
+      </div>
+      <div id="thumbTabExisting">
+        <div id="thumbOptions" class="thumb-options"></div>
+      </div>
+      <div id="thumbTabUpload" style="display:none">
+        <div class="upload-thumb-zone" id="thumbUploadZone">
+          <div class="icon">📤</div>
+          <p><strong>여기에 사진을 드래그</strong>하거나 클릭해서 선택</p>
+          <p class="small">대표 사진으로만 사용되고 본문에는 포함되지 않습니다</p>
+          <input type="file" id="thumbFileInput" accept="image/*" style="display:none">
+        </div>
       </div>
     </div>
   </div>
@@ -327,6 +396,7 @@ let editingPath=null;  // 수정 모드: 글 경로
 let editingSha=null;   // 수정 모드: 파일 SHA
 let isDirty=false;
 let saveTimer=null;
+let thumbOverride=null; // {dataUrl, file, src, filename, uploaded, uploadedPath} - 본문 외 대표 사진
 
 function nextId(){return 'b'+(++blockIdCounter)}
 
@@ -370,6 +440,13 @@ function saveDraft(){
           return obj;
         }
       }),
+      thumbOverride:thumbOverride?{
+        filename:thumbOverride.filename,
+        src:thumbOverride.src,
+        uploaded:thumbOverride.uploaded,
+        uploadedPath:thumbOverride.uploadedPath,
+        dataUrl:(!thumbOverride.uploaded&&thumbOverride.dataUrl&&thumbOverride.dataUrl.length<2000000)?thumbOverride.dataUrl:null
+      }:null,
       editingPath,
       editingSha,
       savedAt:Date.now()
@@ -460,6 +537,17 @@ function restoreDraft(){
     }
     editingPath=d.editingPath||null;
     editingSha=d.editingSha||null;
+    thumbOverride=null;
+    if(d.thumbOverride){
+      thumbOverride={
+        filename:d.thumbOverride.filename,
+        src:d.thumbOverride.src,
+        uploaded:!!d.thumbOverride.uploaded,
+        uploadedPath:d.thumbOverride.uploadedPath,
+        dataUrl:d.thumbOverride.dataUrl||d.thumbOverride.src,
+        file:null
+      };
+    }
     if(editingPath){
       document.getElementById('editingBanner').style.display='flex';
       document.getElementById('editingTitle').textContent=d.meta.title||'(제목 없음)';
@@ -542,7 +630,9 @@ function moveBlock(id,dir){
 
 function setThumbnail(id){
   blocks.forEach(b=>{if(b.type==='image')b.isThumbnail=(b.id===id)});
+  thumbOverride=null; // 본문 사진을 대표로 → 별도 업로드 해제
   renderBlocks();
+  updateThumbPreview();
   markDirty();
   showStatus('success','대표 사진이 변경되었습니다');
 }
@@ -557,10 +647,131 @@ function updateTextContent(id,html){
   if(b){b.content=html;markDirty()}
 }
 
+// ========== 대표 사진 (메타 영역) ==========
+function getThumbSource(){
+  // 우선순위: 1) 별도 업로드된 thumbOverride, 2) blocks 중 isThumbnail, 3) 첫 사진
+  if(thumbOverride)return{src:thumbOverride.dataUrl||thumbOverride.src,label:thumbOverride.filename||'대표 사진(별도)',override:true};
+  const starred=blocks.find(b=>b.type==='image'&&b.isThumbnail);
+  if(starred)return{src:starred.dataUrl||starred.src,label:starred.filename||'본문 사진',override:false};
+  const first=blocks.find(b=>b.type==='image');
+  if(first)return{src:first.dataUrl||first.src,label:(first.filename||'본문 사진')+' (자동)',override:false};
+  return null;
+}
+
+function updateThumbPreview(){
+  const box=document.getElementById('thumbBox');
+  if(!box)return;
+  const t=getThumbSource();
+  if(t){
+    box.className='thumb-box has-image';
+    box.innerHTML=
+      '<img src="'+t.src+'" class="thumb-img" alt="대표 사진" onerror="this.parentElement.classList.remove(\'has-image\');this.outerHTML=\'<div class=thumb-empty><div class=icon>⚠️</div><p>이미지 로드 실패</p></div>\'">'+
+      '<div class="thumb-actions">'+
+        '<button onclick="event.stopPropagation();openThumbModal()">변경</button>'+
+        (t.override?'<button class="del" onclick="event.stopPropagation();clearThumbOverride()">삭제</button>':'')+
+      '</div>';
+  }else{
+    box.className='thumb-box';
+    box.innerHTML=
+      '<div class="thumb-empty">'+
+        '<div class="icon">📷</div>'+
+        '<p>대표 사진을 선택하세요<br><span style="font-size:11px;color:#BBB">없으면 첫 사진이 자동 사용됩니다</span></p>'+
+        '<button class="pick-btn" onclick="event.stopPropagation();openThumbModal()">사진 선택</button>'+
+      '</div>';
+  }
+}
+
+function openThumbModal(){
+  const m=document.getElementById('thumbModal');
+  const imgs=blocks.filter(b=>b.type==='image');
+  renderThumbOptions(imgs);
+  switchThumbTab(imgs.length>0?'existing':'upload');
+  m.classList.add('show');
+}
+
+function closeThumbModal(){document.getElementById('thumbModal').classList.remove('show')}
+
+function switchThumbTab(tab){
+  document.getElementById('tabExisting').classList.toggle('active',tab==='existing');
+  document.getElementById('tabUpload').classList.toggle('active',tab==='upload');
+  document.getElementById('thumbTabExisting').style.display=tab==='existing'?'block':'none';
+  document.getElementById('thumbTabUpload').style.display=tab==='upload'?'block':'none';
+}
+
+function renderThumbOptions(imgs){
+  const grid=document.getElementById('thumbOptions');
+  if(imgs.length===0){
+    grid.innerHTML='<div style="grid-column:1/-1;text-align:center;padding:30px;color:#888;font-size:13px">아직 추가된 사진이 없어요.<br><span style="font-size:11px;color:#BBB">"새 사진 업로드" 탭으로 이동하거나, 먼저 본문에 사진을 추가하세요</span></div>';
+    return;
+  }
+  grid.innerHTML=imgs.map(b=>{
+    const src=b.dataUrl||b.src;
+    const cur=b.isThumbnail&&!thumbOverride;
+    return '<div class="thumb-option'+(cur?' selected':'')+'" onclick="pickFromBlocks(\''+b.id+'\')">'+
+      '<img src="'+src+'" alt="" onerror="this.style.display=\'none\'">'+
+      (cur?'<div class="thumb-option-current">⭐ 현재</div>':'')+
+    '</div>';
+  }).join('');
+}
+
+function pickFromBlocks(id){
+  setThumbnail(id);
+  closeThumbModal();
+}
+
+function clearThumbOverride(){
+  if(!confirm('업로드한 대표 사진을 삭제할까요?'))return;
+  thumbOverride=null;
+  updateThumbPreview();
+  markDirty();
+  showStatus('info','대표 사진이 제거되었습니다 (첫 본문 사진이 자동 사용됨)');
+}
+
+// 별도 사진 업로드 (대표 사진 전용)
+function setupThumbUpload(){
+  const zone=document.getElementById('thumbUploadZone');
+  const inp=document.getElementById('thumbFileInput');
+  if(!zone||!inp)return;
+  zone.addEventListener('click',e=>{if(e.target.tagName!=='INPUT')inp.click()});
+  zone.addEventListener('dragover',e=>{e.preventDefault();zone.style.borderColor='#B8956A';zone.style.background='#FFF8F0'});
+  zone.addEventListener('dragleave',()=>{zone.style.borderColor='';zone.style.background=''});
+  zone.addEventListener('drop',e=>{
+    e.preventDefault();
+    zone.style.borderColor='';zone.style.background='';
+    const f=Array.from(e.dataTransfer.files).find(x=>x.type.startsWith('image/'));
+    if(f)handleThumbFile(f);
+  });
+  inp.addEventListener('change',e=>{
+    const f=e.target.files[0];
+    if(f)handleThumbFile(f);
+    inp.value='';
+  });
+}
+
+function handleThumbFile(file){
+  const r=new FileReader();
+  r.onload=e=>{
+    thumbOverride={
+      file,filename:file.name,
+      dataUrl:e.target.result,
+      src:null,uploaded:false,uploadedPath:null
+    };
+    // 본문 사진의 isThumbnail은 모두 해제
+    blocks.forEach(b=>{if(b.type==='image')b.isThumbnail=false});
+    renderBlocks();
+    updateThumbPreview();
+    closeThumbModal();
+    markDirty();
+    showStatus('success','대표 사진이 설정되었습니다');
+  };
+  r.readAsDataURL(file);
+}
+
 function renderBlocks(){
   const a=document.getElementById('blocks');
   if(blocks.length===0){
     a.innerHTML='<div class="empty">오른쪽 아래 <kbd>＋</kbd> 버튼 또는 위 영역에서 시작하세요.<br><span style="font-size:11px;color:#BBB;display:inline-block;margin-top:8px">단축키: <kbd>Ctrl+Shift+T</kbd> 텍스트 · <kbd>Ctrl+Shift+I</kbd> 사진 · <kbd>Ctrl+S</kbd> 저장</span></div>';
+    updateThumbPreview();
     return;
   }
   a.innerHTML=blocks.map((b,i)=>renderBlock(b,i)).join('');
@@ -580,6 +791,7 @@ function renderBlocks(){
       if(cap)cap.addEventListener('input',()=>updateCaption(b.id,cap.value));
     }
   });
+  updateThumbPreview();
 }
 
 function renderBlock(b,i){
@@ -782,24 +994,39 @@ function loadIntoEditor(w){
   // 블록 복원
   blocks=[];
   blockIdCounter=0;
+  thumbOverride=null;
   const thumb=m.thumbnail;
+  let thumbMatched=false;
   if(Array.isArray(m.blocks)){
     for(const b of m.blocks){
       if(b.type==='text'){
         blocks.push({id:nextId(),type:'text',content:mdToHtml(b.content||'')});
       }else if(b.type==='image'){
         const filename=(b.src||'').split('/').pop()||'image';
+        const isThumb=thumb===b.src;
+        if(isThumb)thumbMatched=true;
         blocks.push({
           id:nextId(),type:'image',
           src:b.src,dataUrl:b.src,
           filename,caption:b.caption||'',
           uploaded:true,existing:true,
           uploadedPath:b.src,
-          isThumbnail:thumb===b.src,
+          isThumbnail:isThumb,
           file:null
         });
       }
     }
+  }
+  // thumbnail이 본문 사진과 매칭 안 되면 (별도 업로드된 대표 사진) → thumbOverride
+  if(thumb&&!thumbMatched){
+    thumbOverride={
+      filename:thumb.split('/').pop()||'대표 사진',
+      src:thumb,
+      uploaded:true,
+      uploadedPath:thumb,
+      dataUrl:thumb,
+      file:null
+    };
   }
   // 수정 모드 활성화
   editingPath=w.path;
@@ -808,6 +1035,7 @@ function loadIntoEditor(w){
   document.getElementById('editingTitle').textContent=m.title||'(제목 없음)';
   renderBlocks();
   updateSummary();
+  updateThumbPreview();
   markDirty();
 }
 
@@ -815,12 +1043,14 @@ function cancelEditing(){
   if(!confirm('수정 모드를 취소할까요? 새 글 작성 모드로 돌아갑니다.\n현재 작성 중인 내용은 사라집니다.'))return;
   editingPath=null;
   editingSha=null;
+  thumbOverride=null;
   blocks=[];
   blockIdCounter=0;
   document.getElementById('editingBanner').style.display='none';
   setMeta({date:new Date().toISOString().split('T')[0],duration:'1일 완공'});
   renderBlocks();
   updateSummary();
+  updateThumbPreview();
   showStatus('info','새 글 작성 모드로 전환했습니다');
 }
 
@@ -1040,10 +1270,35 @@ async function publish(){
       addLog('모든 사진 업로드 완료');
     }
     
-    // 2. thumbnail 결정 (별표 표시된 사진 또는 첫 사진)
-    const starred=blocks.find(b=>b.type==='image'&&b.isThumbnail);
-    const firstImg=blocks.find(b=>b.type==='image');
-    const thumb=(starred?.src||starred?.uploadedPath)||(firstImg?.src||firstImg?.uploadedPath)||'';
+    // 1-B. 별도 대표 사진 업로드 (있고 아직 안 올라간 경우)
+    if(thumbOverride&&!thumbOverride.uploaded&&thumbOverride.file){
+      addLog('대표 사진 업로드 중...');
+      try{
+        const ts=Date.now();
+        const sn=safeName(thumbOverride.filename||'thumbnail.jpg');
+        const remoteName=ts+'_thumb_'+sn;
+        const remotePath='public/uploads/'+remoteName;
+        const b64=await fileToBase64(thumbOverride.file);
+        await ghPutFile(remotePath,b64,null,'Upload thumbnail: '+remoteName);
+        thumbOverride.uploaded=true;
+        thumbOverride.uploadedPath='/uploads/'+remoteName;
+        thumbOverride.src=thumbOverride.uploadedPath;
+        addLog('✓ 대표 사진 업로드 완료: '+remoteName);
+      }catch(e){
+        throw new Error('대표 사진 업로드 실패: '+e.message);
+      }
+    }
+    
+    // 2. thumbnail 결정 (우선순위: thumbOverride > 별표 본문 사진 > 첫 본문 사진)
+    let thumb='';
+    if(thumbOverride&&(thumbOverride.uploadedPath||thumbOverride.src)){
+      thumb=thumbOverride.uploadedPath||thumbOverride.src;
+    }else{
+      const starred=blocks.find(b=>b.type==='image'&&b.isThumbnail);
+      const firstImg=blocks.find(b=>b.type==='image');
+      thumb=(starred?.src||starred?.uploadedPath)||(firstImg?.src||firstImg?.uploadedPath)||'';
+    }
+    addLog('대표 사진: '+(thumb||'(없음)'));
     
     // 3. YAML 빌드
     addLog('마크다운 생성 중...');
@@ -1114,6 +1369,8 @@ function closePubModal(){
 if(TOKEN){
   checkDraft();
   updateSummary();
+  setupThumbUpload();
+  updateThumbPreview();
 }
 </script>
 </body>
