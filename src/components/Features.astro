@@ -1,18 +1,19 @@
 ---
+import { getCollection } from 'astro:content';
+const settingsArr = await getCollection('settings');
+const st = settingsArr[0]?.data ?? {};
 const features = [
-  { num: "01 — SPEED", title: "1일이면<br />끝납니다.", desc: "여름 6시간, 겨울 12시간 양생. 영업을 멈출 일이 없습니다." },
-  { num: "02 — CUSTOM", title: "색과 질감을<br />직접 선택.", desc: "색상부터 규사 입자까지. 공간에 맞는 정확한 마감을 만듭니다." },
-  { num: "03 — STUDIO", title: "시공이 아닌<br />작품으로.", desc: "도장이 아닌 디자인 작업. 한 면, 한 면 검수합니다." },
+  { num: `01 — ${st.feature1Label ?? 'ONE DAY'}`, title: '하루면<br />됩니다.', desc: '여름 6시간, 겨울 12시간 완성. 일정에 쫓기지 않습니다.' },
+  { num: `02 — ${st.feature2Label ?? 'BESPOKE'}`, title: '원하는 색상과<br />질감을 직접 선택.', desc: '색상과 규사 선택 자유. 공간이 원하는 분위기로 완성됩니다.' },
+  { num: `03 — ${st.feature3Label ?? 'STUDIO GRADE'}`, title: '시공이 아닌<br />작품으로.', desc: '같은 공간은 없습니다. 매 현장을 작품처럼 완성합니다.' },
 ];
-
 const stats = [
-  { num: "6", unit: "h", label: "여름 양생 시간" },
-  { num: "12", unit: "h", label: "겨울 양생 시간" },
-  { num: "∞", unit: "", label: "색상 옵션" },
-  { num: "1", unit: "day", label: "평균 완공" },
+  { num: '6',  unit: 'h',   label: '여름 양생 시간' },
+  { num: '12', unit: 'h',   label: '겨울 양생 시간' },
+  { num: '∞',  unit: '',    label: '색상 선택'      },
+  { num: '1',  unit: 'day', label: '완공 기준'      },
 ];
 ---
-
 <section class="grid md:grid-cols-3">
   {features.map((f, i) => (
     <div class={`p-10 md:p-14 ${i < features.length - 1 ? "border-b md:border-b-0 md:border-r" : ""} border-border`}>
@@ -25,14 +26,13 @@ const stats = [
     </div>
   ))}
 </section>
-
 <section class="grid grid-cols-2 md:grid-cols-4 gap-8 md:gap-6 px-6 md:px-12 py-14 md:py-20 border-t border-border">
-  {stats.map((s) => (
+  {stats.map((stat) => (
     <div>
       <div class="text-5xl md:text-6xl font-black tracking-[-0.04em] leading-none mb-3 text-text">
-        {s.num}<span class="text-2xl text-accent ml-1">{s.unit}</span>
+        {stat.num}<span class="text-2xl text-accent ml-1">{stat.unit}</span>
       </div>
-      <div class="text-[13px] text-muted tracking-[0.1em] font-medium">{s.label}</div>
+      <div class="text-[13px] text-muted tracking-[0.1em] font-medium">{stat.label}</div>
     </div>
   ))}
 </section>

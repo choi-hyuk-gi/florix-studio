@@ -17,30 +17,37 @@ const works = defineCollection({
   }),
 });
 
+const settings = defineCollection({
+  loader: glob({ pattern: '**/*.md', base: './src/content/settings' }),
+  schema: z.object({
+    heroBadge: z.string().optional(),
+    heroTitle: z.string().optional(),
+    heroTitleAccent: z.string().optional(),
+    heroSubtitle: z.string().optional(),
+    heroSubtitle2: z.string().optional(),
+    heroImage: z.string().optional(),
+    heroSlides: z.array(z.object({ image: z.string(), alt: z.string().optional() })).optional(),
+    recentWorkLabel: z.string().optional(),
+    recentWorkNumber: z.string().optional(),
+    feature1Label: z.string().optional(),
+    feature2Label: z.string().optional(),
+    feature3Label: z.string().optional(),
+    servicesHeadline1: z.string().optional(),
+    servicesHeadline2: z.string().optional(),
+    processHeadline1: z.string().optional(),
+    processHeadline2: z.string().optional(),
+    ctaTitle2: z.string().optional(),
+    ctaSubtitle: z.string().optional(),
+  }),
+});
+
 const faqs = defineCollection({
   loader: glob({ pattern: '**/*.md', base: './src/content/faqs' }),
   schema: z.object({
     question: z.string(),
     order: z.number().default(99),
+    body: z.string().optional(),
   }),
 });
 
-const settings = defineCollection({
-  loader: glob({ pattern: '**/*.md', base: './src/content/settings' }),
-  schema: z.object({
-    heroBadge: z.string().default('CONCRETE POLISHING STUDIO'),
-    heroTitle: z.string().default('콘크리트의'),
-    heroTitleAccent: z.string().default('새로운 기준.'),
-    heroSubtitle: z.string().default('1일 완공. 원하는 색상, 원하는 규사.'),
-    heroSubtitle2: z.string().default('시공이 아닌 작품으로 마감합니다.'),
-    heroImage: z.string().optional(),
-    heroSlides: z.array(z.object({
-      image: z.string(),
-      alt: z.string().optional(),
-    })).default([]),
-    recentWorkLabel: z.string().default('FEATURED WORK'),
-    recentWorkNumber: z.string().default('No. 001'),
-  }),
-});
-
-export const collections = { works, faqs, settings };
+export const collections = { works, settings, faqs };

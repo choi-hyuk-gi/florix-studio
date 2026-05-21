@@ -12,7 +12,7 @@ locale: "ko"
 
 collections:
   - name: "settings"
-    label: "🎨 사이트 설정"
+    label: "사이트 설정"
     label_singular: "사이트 설정"
     folder: "src/content/settings"
     create: false
@@ -20,58 +20,65 @@ collections:
     editor:
       preview: false
     fields:
-      - { label: "Hero 배지 (작은 글씨)", name: "heroBadge", widget: "string", default: "CONCRETE POLISHING STUDIO · SINCE 2026" }
-      - { label: "Hero 제목 1줄", name: "heroTitle", widget: "string", default: "콘크리트의" }
-      - { label: "Hero 제목 2줄 (강조)", name: "heroTitleAccent", widget: "string", default: "새로운 기준." }
-      - { label: "Hero 부제목 1", name: "heroSubtitle", widget: "string", default: "1일 완공. 원하는 색상, 원하는 규사." }
-      - { label: "Hero 부제목 2", name: "heroSubtitle2", widget: "string", default: "시공이 아닌 작품으로 마감합니다." }
-      - { label: "Hero 우측 단일 사진 (슬라이드 안 쓸 때만)", name: "heroImage", widget: "image", required: false, hint: "슬라이드 사진을 1장 이상 추가하면 이건 무시됨" }
-      - label: "🎬 Hero 슬라이드 사진들 (여러 장이면 자동 슬라이드)"
+      - { label: "Hero 배지 (작은 글씨)", name: "heroBadge", widget: "string" }
+      - { label: "Hero 제목 1줄", name: "heroTitle", widget: "string" }
+      - { label: "Hero 제목 2줄 (강조색)", name: "heroTitleAccent", widget: "string" }
+      - { label: "Hero 부제목 1", name: "heroSubtitle", widget: "string" }
+      - { label: "Hero 부제목 2", name: "heroSubtitle2", widget: "string" }
+      - { label: "Hero 우측 단일 사진", name: "heroImage", widget: "image", required: false }
+      - label: "Hero 슬라이드 사진들"
         name: "heroSlides"
         widget: "list"
         required: false
         summary: "{{fields.alt}}"
         fields:
           - { label: "사진", name: "image", widget: "image" }
-          - { label: "설명 (선택)", name: "alt", widget: "string", required: false, hint: "예: 베이지 톤 카페 시공" }
-      - { label: "Recent Work 라벨", name: "recentWorkLabel", widget: "string", default: "FEATURED WORK" }
-      - { label: "Recent Work 번호", name: "recentWorkNumber", widget: "string", default: "No. 001" }
-
+          - { label: "설명 (선택)", name: "alt", widget: "string", required: false }
+      - { label: "Recent Work 라벨", name: "recentWorkLabel", widget: "string" }
+      - { label: "Recent Work 번호", name: "recentWorkNumber", widget: "string" }
+      - { label: "강점 01 라벨", name: "feature1Label", widget: "string", hint: "예: ONE DAY" }
+      - { label: "강점 02 라벨", name: "feature2Label", widget: "string", hint: "예: BESPOKE" }
+      - { label: "강점 03 라벨", name: "feature3Label", widget: "string", hint: "예: STUDIO GRADE" }
+      - { label: "서비스 헤드라인 1줄", name: "servicesHeadline1", widget: "string" }
+      - { label: "서비스 헤드라인 2줄", name: "servicesHeadline2", widget: "string" }
+      - { label: "프로세스 헤드라인 1줄", name: "processHeadline1", widget: "string" }
+      - { label: "프로세스 헤드라인 2줄", name: "processHeadline2", widget: "string" }
+      - { label: "CTA 강조 문구", name: "ctaTitle2", widget: "string" }
+      - { label: "CTA 설명 문구", name: "ctaSubtitle", widget: "string" }
   - name: "works"
-    label: "📷 시공 사례"
+    label: "시공 사례"
     label_singular: "시공 사례"
     folder: "src/content/works"
     create: true
     slug: "{{year}}-{{month}}-{{day}}-{{slug}}"
     summary: "{{title}} - {{location}}"
     fields:
-      - { label: "제목", name: "title", widget: "string", hint: "예: 강남 카페 시공" }
-      - { label: "지역", name: "location", widget: "string", hint: "예: 서울 강남구" }
-      - { label: "면적 (㎡)", name: "area", widget: "number", required: false, hint: "예: 120" }
+      - { label: "제목", name: "title", widget: "string" }
+      - { label: "지역", name: "location", widget: "string" }
+      - { label: "면적 (㎡)", name: "area", widget: "number", required: false }
       - label: "공간 종류"
         name: "category"
         widget: "select"
         options: ["주거", "카페", "상업공간", "사무공간", "기타"]
       - { label: "시공일", name: "date", widget: "datetime", format: "YYYY-MM-DD", time_format: false }
-      - { label: "대표 사진", name: "thumbnail", widget: "image", hint: "리스트 메인 사진" }
+      - { label: "대표 사진", name: "thumbnail", widget: "image" }
       - label: "추가 사진"
         name: "gallery"
         widget: "list"
         required: false
         field: { label: "사진", name: "image", widget: "image" }
-      - { label: "사용 컬러/규사", name: "specs", widget: "string", required: false, hint: "예: 베이지 톤 / 중간 규사 / 매트 마감" }
+      - { label: "사용 컬러/규사", name: "specs", widget: "string", required: false }
       - { label: "시공 소요시간", name: "duration", widget: "string", required: false, default: "1일 완공" }
       - { label: "본문", name: "body", widget: "markdown" }
-      - { label: "메인 노출", name: "featured", widget: "boolean", default: false, hint: "체크 시 홈에 우선 노출" }
-
+      - { label: "메인 노출", name: "featured", widget: "boolean", default: false }
   - name: "faqs"
-    label: "❓ FAQ (자주 묻는 질문)"
+    label: "FAQ (자주 묻는 질문)"
     label_singular: "FAQ"
     folder: "src/content/faqs"
     create: true
     slug: "{{slug}}"
     summary: "{{question}}"
     fields:
-      - { label: "질문", name: "question", widget: "string", hint: "예: 시공 시간은 얼마나 걸리나요?" }
-      - { label: "순서", name: "order", widget: "number", default: 99, hint: "낮은 숫자가 위로 (1, 2, 3...)" }
-      - { label: "답변", name: "body", widget: "text", hint: "고객에게 보여질 답변" }
+      - { label: "질문", name: "question", widget: "string" }
+      - { label: "순서", name: "order", widget: "number", default: 99 }
+      - { label: "답변", name: "body", widget: "text" }
