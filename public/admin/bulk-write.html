@@ -61,6 +61,7 @@
     .drop-zone-icon { font-size: 36px; margin-bottom: 8px; }
     .drop-zone p { font-size: 14px; color: #666; }
     .drop-zone strong { color: #1A1A1A; font-weight: 700; }
+    .drop-zone-hint { font-size: 11px; color: #999; margin-top: 4px; }
 
     .status {
       padding: 14px 16px; border-radius: 8px; margin-bottom: 16px;
@@ -80,10 +81,12 @@
 
     .blocks-area { min-height: 100px; }
     .empty-state { text-align: center; padding: 48px 24px; color: #999; font-size: 14px; }
+    .empty-state .kbd { background: #F0F0EB; border: 1px solid #E5E5E0; border-radius: 4px; padding: 2px 6px; font-family: monospace; font-size: 11px; color: #666; }
 
     .block {
       background: white; border: 1px solid #E5E5E0; border-radius: 8px;
       margin-bottom: 12px; overflow: hidden; transition: all 0.15s;
+      position: relative;
     }
     .block:hover { border-color: #B8956A; }
     .block-header {
@@ -101,6 +104,28 @@
     }
     .icon-btn:hover { border-color: #B8956A; color: #B8956A; }
     .icon-btn:disabled { opacity: 0.3; cursor: not-allowed; }
+
+    /* 블록 사이 인서트 버튼 */
+    .block-insert {
+      height: 8px; position: relative; opacity: 0; transition: opacity 0.15s;
+      margin: -4px 0; z-index: 5;
+    }
+    .block-insert:hover { opacity: 1; height: 32px; }
+    .block-insert-line {
+      position: absolute; top: 50%; left: 0; right: 0;
+      height: 2px; background: #B8956A; transform: translateY(-50%);
+    }
+    .block-insert-buttons {
+      position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+      display: flex; gap: 4px; background: white;
+      padding: 2px 8px; border-radius: 12px; border: 1px solid #B8956A;
+    }
+    .block-insert-buttons button {
+      background: none; border: none; cursor: pointer; padding: 2px 8px;
+      font-size: 12px; color: #B8956A; font-family: inherit; font-weight: 600;
+      border-radius: 4px;
+    }
+    .block-insert-buttons button:hover { background: #FFF8F0; }
 
     .text-toolbar {
       display: flex; flex-wrap: wrap; gap: 4px; padding: 8px;
@@ -148,10 +173,6 @@
       height: 100%; background: #B8956A; transition: width 0.3s; width: 0%;
     }
 
-    .add-block-bar {
-      display: flex; gap: 8px; margin-top: 16px; margin-bottom: 24px;
-    }
-
     .summary-bar {
       position: fixed; bottom: 0; left: 0; right: 0;
       background: white; border-top: 1px solid #E5E5E0;
@@ -160,6 +181,37 @@
     }
     .summary-info { font-size: 13px; color: #666; }
     .summary-info strong { color: #1A1A1A; font-weight: 700; }
+    .summary-actions { display: flex; gap: 8px; align-items: center; }
+
+    /* 플로팅 추가 버튼 (FAB) */
+    .fab-container {
+      position: fixed; right: 24px; bottom: 80px; z-index: 60;
+    }
+    .fab-main {
+      width: 56px; height: 56px; border-radius: 50%;
+      background: #1A1A1A; color: white; border: none; cursor: pointer;
+      font-size: 24px; box-shadow: 0 4px 16px rgba(0,0,0,0.2);
+      display: flex; align-items: center; justify-content: center;
+      transition: all 0.2s; font-family: inherit;
+    }
+    .fab-main:hover { background: #B8956A; transform: scale(1.05); }
+    .fab-main.open { transform: rotate(45deg); }
+    .fab-menu {
+      position: absolute; bottom: 70px; right: 0;
+      display: flex; flex-direction: column; gap: 8px;
+      opacity: 0; pointer-events: none; transform: translateY(10px);
+      transition: all 0.2s;
+    }
+    .fab-menu.open { opacity: 1; pointer-events: auto; transform: translateY(0); }
+    .fab-item {
+      background: white; border: 1px solid #E5E5E0; border-radius: 24px;
+      padding: 10px 16px; cursor: pointer; font-size: 13px; font-weight: 600;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08); white-space: nowrap;
+      display: flex; align-items: center; gap: 8px;
+      font-family: inherit; transition: all 0.15s;
+    }
+    .fab-item:hover { border-color: #B8956A; color: #B8956A; transform: translateX(-4px); }
+    .fab-item-icon { font-size: 16px; }
 
     .emoji-picker {
       position: absolute; background: white; border: 1px solid #E5E5E0;
@@ -257,21 +309,30 @@
       <div class="drop-zone" id="dropZone">
         <div class="drop-zone-icon">📷</div>
         <p><strong>여기에 사진을 드래그</strong>하거나 클릭해서 선택</p>
-        <p style="margin-top: 6px; font-size: 12px;">여러 장 한 번에 가능 · 자동으로 순서대로 추가됨</p>
+        <p class="drop-zone-hint">여러 장 한 번에 가능 · 자동으로 순서대로 추가됨</p>
         <input type="file" id="fileInput" multiple accept="image/*" style="display: none;">
-      </div>
-
-      <div class="add-block-bar">
-        <button class="btn-ghost" onclick="addTextBlock()">＋ 텍스트 추가</button>
-        <button class="btn-ghost" onclick="document.getElementById('fileInput').click()">＋ 사진 추가</button>
       </div>
 
       <div class="blocks-area" id="blocksArea">
         <div class="empty-state" id="emptyState">
-          위 영역에 사진을 드래그하거나, 텍스트 추가 버튼을 눌러 시작하세요.
+          위 영역에 사진을 드래그하거나, 오른쪽 아래 <strong>＋ 버튼</strong>으로 시작하세요.<br>
+          <span style="font-size: 12px; color: #BBB;">단축키: <span class="kbd">Ctrl+Shift+T</span> 텍스트 · <span class="kbd">Ctrl+Shift+I</span> 사진</span>
         </div>
       </div>
     </div>
+  </div>
+
+  <!-- 플로팅 추가 버튼 -->
+  <div class="fab-container" id="fabContainer" style="display: none;">
+    <div class="fab-menu" id="fabMenu">
+      <button class="fab-item" onclick="addTextBlock(); toggleFab();">
+        <span class="fab-item-icon">📝</span> 텍스트 추가
+      </button>
+      <button class="fab-item" onclick="document.getElementById('fileInput').click(); toggleFab();">
+        <span class="fab-item-icon">📷</span> 사진 추가
+      </button>
+    </div>
+    <button class="fab-main" id="fabMain" onclick="toggleFab()" title="블록 추가">+</button>
   </div>
 
   <div class="summary-bar" id="summaryBar" style="display: none;">
@@ -279,12 +340,13 @@
       <span><strong id="blockCount">0</strong>개 블록</span>
       <span style="margin-left: 16px;">사진 <strong id="imageCount">0</strong>장</span>
     </div>
-    <button class="btn btn-primary" id="publishBtn2" disabled>발행</button>
+    <div class="summary-actions">
+      <button class="btn btn-primary" id="publishBtn2" disabled>발행</button>
+    </div>
   </div>
 
   <div class="emoji-picker" id="emojiPicker"></div>
 
-  <!-- 발행 모달 -->
   <div class="modal" id="publishModal">
     <div class="modal-content">
       <h2 id="modalTitle">발행 중...</h2>
@@ -298,7 +360,6 @@
   </div>
 
   <script>
-    // ========== GitHub 설정 ==========
     const REPO = 'choi-hyuk-gi/florix-studio';
     const BRANCH = 'main';
     const API_BASE = 'https://api.github.com';
@@ -324,6 +385,7 @@
       document.getElementById('loginGate').style.display = 'none';
       document.getElementById('editor').style.display = 'block';
       document.getElementById('summaryBar').style.display = 'flex';
+      document.getElementById('fabContainer').style.display = 'block';
       document.getElementById('publishBtn').disabled = false;
       document.getElementById('publishBtn2').disabled = false;
       const today = new Date().toISOString().split('T')[0];
@@ -337,10 +399,23 @@
       if (type === 'success') setTimeout(function() { el.className = 'status'; }, 4000);
     }
 
-    // ========== 블록 시스템 ==========
+    // FAB 토글
+    function toggleFab() {
+      document.getElementById('fabMain').classList.toggle('open');
+      document.getElementById('fabMenu').classList.toggle('open');
+    }
+    // 바깥 클릭 시 닫기
+    document.addEventListener('click', function(e) {
+      if (!e.target.closest('.fab-container')) {
+        document.getElementById('fabMain').classList.remove('open');
+        document.getElementById('fabMenu').classList.remove('open');
+      }
+    });
+
     let blocks = [];
     let blockIdCounter = 0;
     let activeTextBlock = null;
+    let insertAtIndex = null; // null = 끝에 추가, 숫자 = 그 위치에 끼워넣기
 
     function nextId() { return 'b' + (++blockIdCounter); }
 
@@ -352,14 +427,27 @@
       if (empty) empty.style.display = blocks.length ? 'none' : 'block';
     }
 
+    function insertBlock(block) {
+      if (insertAtIndex !== null) {
+        blocks.splice(insertAtIndex, 0, block);
+        insertAtIndex = null;
+      } else {
+        blocks.push(block);
+      }
+    }
+
     function addTextBlock(content) {
       const id = nextId();
-      blocks.push({ id: id, type: 'text', content: content || '' });
+      const block = { id: id, type: 'text', content: content || '' };
+      insertBlock(block);
       renderBlocks();
       updateSummary();
       setTimeout(function() {
         const el = document.querySelector('#' + id + ' .text-content');
-        if (el) el.focus();
+        if (el) {
+          el.focus();
+          el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
       }, 50);
     }
 
@@ -367,18 +455,28 @@
       const id = nextId();
       const reader = new FileReader();
       reader.onload = function(e) {
-        blocks.push({
+        const block = {
           id: id, type: 'image',
           file: file, filename: file.name,
           dataUrl: e.target.result,
           caption: '',
           uploaded: false, uploading: false,
           githubPath: null
-        });
+        };
+        insertBlock(block);
         renderBlocks();
         updateSummary();
       };
       reader.readAsDataURL(file);
+    }
+
+    function insertAt(index, type) {
+      insertAtIndex = index;
+      if (type === 'text') {
+        addTextBlock();
+      } else {
+        document.getElementById('fileInput').click();
+      }
     }
 
     function deleteBlock(id) {
@@ -415,10 +513,17 @@
     function renderBlocks() {
       const area = document.getElementById('blocksArea');
       if (blocks.length === 0) {
-        area.innerHTML = '<div class="empty-state" id="emptyState">위 영역에 사진을 드래그하거나, 텍스트 추가 버튼을 눌러 시작하세요.</div>';
+        area.innerHTML = '<div class="empty-state" id="emptyState">위 영역에 사진을 드래그하거나, 오른쪽 아래 <strong>＋ 버튼</strong>으로 시작하세요.<br><span style="font-size: 12px; color: #BBB;">단축키: <span class="kbd">Ctrl+Shift+T</span> 텍스트 · <span class="kbd">Ctrl+Shift+I</span> 사진</span></div>';
         return;
       }
-      area.innerHTML = blocks.map(function(b, i) { return renderBlock(b, i); }).join('');
+      // 블록 사이사이에 인서트 영역 넣기
+      let html = '';
+      blocks.forEach(function(b, i) {
+        html += renderInsertZone(i);
+        html += renderBlock(b, i);
+      });
+      html += renderInsertZone(blocks.length);
+      area.innerHTML = html;
 
       blocks.forEach(function(b) {
         if (b.type === 'text') {
@@ -437,6 +542,16 @@
           if (cap) cap.addEventListener('input', function() { updateCaption(b.id, cap.value); });
         }
       });
+    }
+
+    function renderInsertZone(index) {
+      return '<div class="block-insert">' +
+        '<div class="block-insert-line"></div>' +
+        '<div class="block-insert-buttons">' +
+          '<button onclick="insertAt(' + index + ', \'text\')">＋ 텍스트</button>' +
+          '<button onclick="insertAt(' + index + ', \'image\')">＋ 사진</button>' +
+        '</div>' +
+      '</div>';
     }
 
     function renderBlock(b, idx) {
@@ -546,7 +661,19 @@
     document.addEventListener('dragover', function(e) { e.preventDefault(); });
     document.addEventListener('drop', function(e) { e.preventDefault(); });
 
-    // ========== 발행 로직 ==========
+    // 단축키
+    document.addEventListener('keydown', function(e) {
+      if (e.ctrlKey && e.shiftKey && e.key === 'T') {
+        e.preventDefault();
+        addTextBlock();
+      }
+      if (e.ctrlKey && e.shiftKey && e.key === 'I') {
+        e.preventDefault();
+        fileInput.click();
+      }
+    });
+
+    // 발행 로직
     function log(type, msg) {
       const logEl = document.getElementById('publishLog');
       const line = document.createElement('div');
@@ -600,33 +727,25 @@
     }
 
     function htmlToMarkdown(html) {
-      // 간단한 HTML -> Markdown 변환
       let md = html;
-      // 헤더
       md = md.replace(/<h2[^>]*>(.*?)<\/h2>/gi, '\n## $1\n');
       md = md.replace(/<h3[^>]*>(.*?)<\/h3>/gi, '\n### $1\n');
-      // 굵게/기울임
       md = md.replace(/<(b|strong)[^>]*>(.*?)<\/(b|strong)>/gi, '**$2**');
       md = md.replace(/<(i|em)[^>]*>(.*?)<\/(i|em)>/gi, '*$2*');
       md = md.replace(/<u[^>]*>(.*?)<\/u>/gi, '$1');
-      // 색상 span은 HTML 그대로 유지 (마크다운에 색상이 없으므로)
-      // 줄바꿈
       md = md.replace(/<br\s*\/?>/gi, '\n');
       md = md.replace(/<\/p>/gi, '\n\n');
       md = md.replace(/<p[^>]*>/gi, '');
       md = md.replace(/<div[^>]*>/gi, '');
       md = md.replace(/<\/div>/gi, '\n');
-      // 리스트
       md = md.replace(/<ul[^>]*>/gi, '\n');
       md = md.replace(/<\/ul>/gi, '\n');
       md = md.replace(/<li[^>]*>(.*?)<\/li>/gi, '- $1\n');
-      // HTML 엔티티
       md = md.replace(/&nbsp;/g, ' ');
       md = md.replace(/&amp;/g, '&');
       md = md.replace(/&lt;/g, '<');
       md = md.replace(/&gt;/g, '>');
       md = md.replace(/&quot;/g, '"');
-      // 정리
       md = md.replace(/\n{3,}/g, '\n\n').trim();
       return md;
     }
@@ -643,11 +762,7 @@
 
     async function githubPut(path, content, message, sha) {
       const url = API_BASE + '/repos/' + REPO + '/contents/' + path;
-      const body = {
-        message: message,
-        content: content,
-        branch: BRANCH
-      };
+      const body = { message: message, content: content, branch: BRANCH };
       if (sha) body.sha = sha;
       const res = await fetch(url, {
         method: 'PUT',
@@ -700,14 +815,12 @@
     }
 
     function buildMarkdown(meta, blocks) {
-      // Frontmatter
       let fm = '---\n';
       fm += 'title: "' + meta.title.replace(/"/g, '\\"') + '"\n';
       fm += 'location: "' + meta.location.replace(/"/g, '\\"') + '"\n';
       if (meta.area) fm += 'area: ' + meta.area + '\n';
       fm += 'category: "' + meta.category + '"\n';
       fm += 'date: ' + meta.date + '\n';
-      // 대표 사진 = 첫 번째 이미지
       const firstImage = blocks.find(function(b) { return b.type === 'image' && b.githubPath; });
       if (firstImage) {
         fm += 'thumbnail: "' + firstImage.githubPath + '"\n';
@@ -715,7 +828,6 @@
       if (meta.specs) fm += 'specs: "' + meta.specs.replace(/"/g, '\\"') + '"\n';
       fm += 'duration: "' + (meta.duration || '1일 완공') + '"\n';
       fm += 'featured: false\n';
-      // blocks 배열
       fm += 'blocks:\n';
       blocks.forEach(function(b) {
         if (b.type === 'text') {
@@ -737,14 +849,12 @@
       return fm;
     }
 
-    // UTF-8 -> Base64 (한글 지원)
     function utf8ToBase64(str) {
       return btoa(unescape(encodeURIComponent(str)));
     }
 
     async function publish() {
       if (!validateForm()) return;
-
       openModal();
 
       try {
@@ -760,7 +870,6 @@
 
         log('info', '발행 시작: ' + meta.title);
 
-        // 1. 이미지 업로드
         const imageBlocks = blocks.filter(function(b) { return b.type === 'image' && !b.uploaded; });
         log('info', '사진 ' + imageBlocks.length + '장 업로드 시작...');
 
@@ -770,17 +879,14 @@
 
         log('success', '모든 사진 업로드 완료');
 
-        // 2. 마크다운 생성
         log('info', '글 마크다운 생성 중...');
         const markdown = buildMarkdown(meta, blocks);
         log('success', '마크다운 생성 완료 (' + markdown.length + '자)');
 
-        // 3. 글 파일 업로드
         const slug = meta.date + '-' + slugify(meta.title);
         const postPath = 'src/content/works/' + slug + '.md';
         log('info', '글 저장 중: ' + postPath);
 
-        // 기존 파일 있는지 체크
         const existing = await githubGet(postPath);
         const sha = existing ? existing.sha : null;
         if (sha) log('info', '기존 글 발견 - 업데이트합니다');
@@ -791,7 +897,6 @@
         log('success', '✓ 글 저장 완료');
         log('info', '사이트 빌드 대기 중... (2-3분 후 반영)');
 
-        // 완료
         document.getElementById('modalTitle').textContent = '✓ 발행 완료!';
         document.getElementById('modalMessage').textContent = '2-3분 후 사이트에 반영됩니다. Cloudflare가 자동으로 빌드합니다.';
         document.getElementById('modalActions').style.display = 'flex';
