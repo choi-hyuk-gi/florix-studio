@@ -1,9 +1,9 @@
 ---
-heroBadge: CONCRETE POLISHING STUDIO · SINCE 2026
-heroTitle: 콘크리트의
-heroTitleAccent: 새로운 기준.
-heroSubtitle: 1일 완공. 원하는 색상, 원하는 규사.
-heroSubtitle2: 시공이 아닌 작품으로 마감합니다.
+heroBadge: CONCRETE POLISHING STUDIO · SEOUL, KOREA
+heroTitle: 콘크리트를
+heroTitleAccent: 다시 정의하다.
+heroSubtitle: 하루 만에 완공. 색상과 질감, 원하는 대로.
+heroSubtitle2: 시공이 아니라, 작품입니다.
 heroImage: ""
 heroSlides:
   - image: /uploads/kakaotalk_20260520_210600922_02.jpg
