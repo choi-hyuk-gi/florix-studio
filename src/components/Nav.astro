@@ -1,9 +1,9 @@
 ---
 const menu = [
-  { href: '#services', label: '서비스' },
-  { href: '#works', label: '시공 사례' },
-  { href: '#process', label: '시공 과정' },
-  { href: '#faq', label: 'FAQ' },
+  { href: '/#services', label: '서비스' },
+  { href: '/#works', label: '시공 사례' },
+  { href: '/#process', label: '시공 과정' },
+  { href: '/#faq', label: 'FAQ' },
 ];
 ---
 
@@ -19,7 +19,7 @@ const menu = [
     <ul class="hidden md:flex items-center gap-8">
       {menu.map(item => (
         <li>
-          <a href={item.href} class="text-sm font-medium text-text hover:text-accent transition-colors">
+          <a href={item.href} data-nav-link class="text-sm font-medium text-text hover:text-accent transition-colors">
             {item.label}
           </a>
         </li>
@@ -41,7 +41,7 @@ const menu = [
       </a>
     </div>
 
-    <a href="#cta" class="hidden md:inline-flex items-center gap-2 bg-text text-bg px-5 py-2.5 text-sm font-bold tracking-wider hover:bg-accent transition-colors">
+    <a href="/#cta" data-nav-link class="hidden md:inline-flex items-center gap-2 bg-text text-bg px-5 py-2.5 text-sm font-bold tracking-wider hover:bg-accent transition-colors">
       견적 문의 →
     </a>
 
@@ -75,11 +75,11 @@ const menu = [
   <div id="mobile-menu" class="hidden md:hidden fixed inset-x-0 top-[68px] bottom-0 bg-bg z-40 overflow-y-auto">
     <div class="px-6 py-8 flex flex-col gap-1">
       {menu.map(item => (
-        <a href={item.href} class="mobile-menu-link py-4 text-2xl font-bold text-text hover:text-accent transition-colors border-b border-line/40">
+        <a href={item.href} data-nav-link class="mobile-menu-link py-4 text-2xl font-bold text-text hover:text-accent transition-colors border-b border-line/40">
           {item.label}
         </a>
       ))}
-      <a href="#cta" class="mobile-menu-link mt-8 inline-flex items-center justify-center gap-2 bg-text text-bg px-6 py-4 text-base font-bold tracking-wider">
+      <a href="/#cta" data-nav-link class="mobile-menu-link mt-8 inline-flex items-center justify-center gap-2 bg-text text-bg px-6 py-4 text-base font-bold tracking-wider">
         견적 문의 →
       </a>
       <div class="flex items-center gap-4 mt-8 pt-8 border-t border-line/40">
@@ -97,27 +97,52 @@ const menu = [
     const menu = document.getElementById("mobile-menu");
     const iconMenu = document.getElementById("icon-menu");
     const iconClose = document.getElementById("icon-close");
-    if (!btn || !menu) return;
 
     function close() {
+      if (!menu) return;
       menu.classList.add("hidden");
-      iconMenu.classList.remove("hidden");
-      iconClose.classList.add("hidden");
+      iconMenu && iconMenu.classList.remove("hidden");
+      iconClose && iconClose.classList.add("hidden");
       document.body.style.overflow = "";
     }
     function open() {
+      if (!menu) return;
       menu.classList.remove("hidden");
-      iconMenu.classList.add("hidden");
-      iconClose.classList.remove("hidden");
+      iconMenu && iconMenu.classList.add("hidden");
+      iconClose && iconClose.classList.remove("hidden");
       document.body.style.overflow = "hidden";
     }
 
-    btn.addEventListener("click", function() {
-      if (menu.classList.contains("hidden")) open(); else close();
-    });
+    if (btn && menu) {
+      btn.addEventListener("click", function() {
+        if (menu.classList.contains("hidden")) open(); else close();
+      });
+      document.querySelectorAll(".mobile-menu-link").forEach(function(link) {
+        link.addEventListener("click", close);
+      });
+    }
 
-    document.querySelectorAll(".mobile-menu-link").forEach(function(link) {
-      link.addEventListener("click", close);
+    // 네비 링크 클릭 처리: 같은 페이지면 부드러운 스크롤, 다른 페이지면 메인으로 이동
+    document.querySelectorAll('a[data-nav-link]').forEach(function(link) {
+      link.addEventListener('click', function(e) {
+        var href = link.getAttribute('href') || '';
+        // /#anchor 형태만 처리
+        var m = href.match(/^\/#(.+)$/);
+        if (!m) return;
+        var id = m[1];
+        var isHome = location.pathname === '/' || location.pathname === '/index.html';
+        if (isHome) {
+          // 메인 페이지: 부드럽게 스크롤
+          var target = document.getElementById(id);
+          if (target) {
+            e.preventDefault();
+            target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            // URL hash 업데이트 (히스토리에는 안 쌓이게)
+            history.replaceState(null, '', '/#' + id);
+          }
+        }
+        // 다른 페이지(예: /works/...)면 그냥 기본 동작 → 메인으로 이동하면서 앵커
+      });
     });
   })();
 </script>
