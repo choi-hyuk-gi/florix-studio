@@ -23,10 +23,18 @@ const recentWorks = allWorks.sort((a, b) => b.data.date.valueOf() - a.data.date.
         {recentWorks.map((work, i) => (
           <a href={`/works/${work.id}/`} class="group block">
             <div class="relative aspect-[4/5] overflow-hidden bg-gradient-to-br from-[#D8CDB4] via-[#C9BCA0] to-[#B8AB8E] mb-5">
-              <div class="absolute top-4 left-4">
-                <span class="text-[10px] font-bold tracking-[0.2em] uppercase text-text/60 bg-bg/80 px-3 py-1.5">{work.data.category}</span>
+              {work.data.thumbnail && (
+                <img
+                  src={work.data.thumbnail}
+                  alt={work.data.title}
+                  class="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+                  loading="lazy"
+                />
+              )}
+              <div class="absolute top-4 left-4 z-10">
+                <span class="text-[10px] font-bold tracking-[0.2em] uppercase text-text/80 bg-bg/90 backdrop-blur-sm px-3 py-1.5">{work.data.category}</span>
               </div>
-              <div class="absolute bottom-4 right-4 text-[10px] tracking-[0.2em] text-text/40 font-mono">No. {String(i + 1).padStart(3, '0')}</div>
+              <div class="absolute bottom-4 right-4 text-[10px] tracking-[0.2em] text-white/90 font-mono drop-shadow-md z-10">No. {String(i + 1).padStart(3, '0')}</div>
             </div>
             <div>
               <h3 class="text-lg md:text-xl font-bold text-text leading-tight tracking-[-0.02em] group-hover:text-accent transition-colors">{work.data.title}</h3>
