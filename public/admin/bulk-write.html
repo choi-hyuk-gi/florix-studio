@@ -4,163 +4,168 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>플로릭스 스튜디오 - 빠른 작성</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Noto+Sans+KR:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body {
-      font-family: 'Noto Sans KR', 'Inter', sans-serif;
+      font-family: 'Noto Sans KR', sans-serif;
       background: #FAFAF8;
       color: #1A1A1A;
       min-height: 100vh;
-      padding: 24px;
     }
-    .container {
-      max-width: 1200px;
-      margin: 0 auto;
-    }
+    .container { max-width: 1200px; margin: 0 auto; padding: 24px; padding-bottom: 120px; }
     .header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding-bottom: 24px;
-      border-bottom: 1px solid #E5E5E0;
-      margin-bottom: 32px;
+      display: flex; justify-content: space-between; align-items: center;
+      padding-bottom: 24px; border-bottom: 1px solid #E5E5E0; margin-bottom: 32px;
+      position: sticky; top: 0; background: #FAFAF8; z-index: 100; padding-top: 16px;
     }
-    .header h1 {
-      font-size: 24px;
-      font-weight: 800;
-      letter-spacing: -0.02em;
-    }
-    .header-actions {
-      display: flex;
-      gap: 12px;
-    }
+    .header h1 { font-size: 22px; font-weight: 800; letter-spacing: -0.02em; }
+    .header-actions { display: flex; gap: 12px; align-items: center; }
     .btn {
-      padding: 10px 20px;
-      border: none;
-      border-radius: 6px;
-      font-size: 14px;
-      font-weight: 600;
-      cursor: pointer;
-      transition: all 0.15s;
-      font-family: inherit;
+      padding: 10px 20px; border: none; border-radius: 6px;
+      font-size: 14px; font-weight: 600; cursor: pointer;
+      transition: all 0.15s; font-family: inherit;
     }
-    .btn-primary {
-      background: #1A1A1A;
-      color: #FAFAF8;
-    }
-    .btn-primary:hover { background: #B8956A; }
-    .btn-secondary {
-      background: transparent;
-      color: #666;
-      border: 1px solid #E5E5E0;
-    }
+    .btn-primary { background: #1A1A1A; color: #FAFAF8; }
+    .btn-primary:hover:not(:disabled) { background: #B8956A; }
+    .btn-primary:disabled { opacity: 0.4; cursor: not-allowed; }
+    .btn-secondary { background: transparent; color: #666; border: 1px solid #E5E5E0; }
     .btn-secondary:hover { background: #F0F0EB; }
+    .btn-danger { background: #FEE; color: #C62828; border: 1px solid #FCC; padding: 6px 12px; font-size: 12px; }
+    .btn-danger:hover { background: #FDD; }
+    .btn-ghost { background: transparent; color: #666; border: 1px dashed #D5D5D0; padding: 12px 20px; width: 100%; font-size: 14px; }
+    .btn-ghost:hover { border-color: #B8956A; color: #B8956A; background: #FFF8F0; }
+
     .meta-section {
-      background: white;
-      padding: 24px;
-      border-radius: 8px;
-      margin-bottom: 24px;
-      border: 1px solid #E5E5E0;
+      background: white; padding: 24px; border-radius: 8px;
+      margin-bottom: 24px; border: 1px solid #E5E5E0;
     }
-    .meta-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 16px;
+    .meta-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    .field { display: flex; flex-direction: column; gap: 6px; }
+    .field label { font-size: 12px; font-weight: 600; color: #666; letter-spacing: 0.05em; }
+    .field input, .field select {
+      padding: 10px 12px; border: 1px solid #E5E5E0; border-radius: 6px;
+      font-size: 14px; font-family: inherit; background: #FAFAF8;
     }
-    .field {
-      display: flex;
-      flex-direction: column;
-      gap: 6px;
-    }
-    .field label {
-      font-size: 12px;
-      font-weight: 600;
-      color: #666;
-      letter-spacing: 0.05em;
-    }
-    .field input, .field select, .field textarea {
-      padding: 10px 12px;
-      border: 1px solid #E5E5E0;
-      border-radius: 6px;
-      font-size: 14px;
-      font-family: inherit;
-      background: #FAFAF8;
-    }
-    .field input:focus, .field select:focus, .field textarea:focus {
-      outline: none;
-      border-color: #B8956A;
-    }
+    .field input:focus, .field select:focus { outline: none; border-color: #B8956A; }
+
     .drop-zone {
-      border: 2px dashed #D5D5D0;
-      border-radius: 12px;
-      padding: 48px 24px;
-      text-align: center;
-      background: white;
-      cursor: pointer;
-      transition: all 0.2s;
-      margin-bottom: 24px;
+      border: 2px dashed #D5D5D0; border-radius: 12px;
+      padding: 32px 24px; text-align: center; background: white;
+      cursor: pointer; transition: all 0.2s; margin-bottom: 24px;
     }
     .drop-zone:hover, .drop-zone.dragging {
-      border-color: #B8956A;
-      background: #FFF8F0;
+      border-color: #B8956A; background: #FFF8F0;
     }
-    .drop-zone-icon {
-      font-size: 48px;
-      margin-bottom: 12px;
-    }
-    .drop-zone p {
-      font-size: 14px;
-      color: #666;
-    }
-    .drop-zone strong {
-      color: #1A1A1A;
-      font-weight: 700;
-    }
+    .drop-zone-icon { font-size: 36px; margin-bottom: 8px; }
+    .drop-zone p { font-size: 14px; color: #666; }
+    .drop-zone strong { color: #1A1A1A; font-weight: 700; }
+
     .status {
-      padding: 16px;
-      border-radius: 8px;
-      margin-bottom: 16px;
-      font-size: 14px;
-      display: none;
+      padding: 14px 16px; border-radius: 8px; margin-bottom: 16px;
+      font-size: 14px; display: none;
     }
     .status.show { display: block; }
     .status.info { background: #E8F0FE; color: #1A56DB; }
     .status.success { background: #E8F5E9; color: #2E7D32; }
     .status.error { background: #FEE; color: #C62828; }
+
     .login-card {
-      background: white;
-      padding: 48px;
-      border-radius: 12px;
-      text-align: center;
-      border: 1px solid #E5E5E0;
+      background: white; padding: 48px; border-radius: 12px;
+      text-align: center; border: 1px solid #E5E5E0;
     }
-    .login-card h2 {
-      font-size: 20px;
-      margin-bottom: 12px;
+    .login-card h2 { font-size: 20px; margin-bottom: 12px; }
+    .login-card p { color: #666; margin-bottom: 24px; font-size: 14px; }
+
+    .blocks-area { min-height: 100px; }
+    .empty-state { text-align: center; padding: 48px 24px; color: #999; font-size: 14px; }
+
+    /* 블록 */
+    .block {
+      background: white; border: 1px solid #E5E5E0; border-radius: 8px;
+      margin-bottom: 12px; overflow: hidden; transition: all 0.15s;
     }
-    .login-card p {
-      color: #666;
-      margin-bottom: 24px;
-      font-size: 14px;
+    .block:hover { border-color: #B8956A; }
+    .block-header {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 8px 12px; background: #FAFAF8; border-bottom: 1px solid #F0F0EB;
+      font-size: 12px; color: #666;
     }
-    .blocks-area {
-      min-height: 200px;
+    .block-type { font-weight: 700; letter-spacing: 0.05em; }
+    .block-actions { display: flex; gap: 6px; }
+    .icon-btn {
+      background: white; border: 1px solid #E5E5E0; border-radius: 4px;
+      width: 28px; height: 28px; cursor: pointer; font-size: 14px;
+      display: inline-flex; align-items: center; justify-content: center;
+      transition: all 0.15s;
     }
-    .empty-state {
-      text-align: center;
-      padding: 64px 24px;
-      color: #999;
-      font-size: 14px;
+    .icon-btn:hover { border-color: #B8956A; color: #B8956A; }
+    .icon-btn:disabled { opacity: 0.3; cursor: not-allowed; }
+
+    /* 텍스트 블록 */
+    .text-toolbar {
+      display: flex; flex-wrap: wrap; gap: 4px; padding: 8px;
+      background: #F8F8F4; border-bottom: 1px solid #F0F0EB;
     }
+    .tool-btn {
+      background: white; border: 1px solid #E5E5E0; border-radius: 4px;
+      padding: 4px 10px; cursor: pointer; font-size: 13px;
+      font-family: inherit; transition: all 0.1s; min-width: 32px;
+    }
+    .tool-btn:hover { border-color: #B8956A; }
+    .tool-btn.active { background: #1A1A1A; color: white; border-color: #1A1A1A; }
+    .tool-divider { width: 1px; background: #E5E5E0; margin: 0 4px; }
+    .color-btn { width: 28px; height: 28px; padding: 0; border-radius: 4px; }
+    .text-content {
+      padding: 16px; min-height: 120px; outline: none;
+      font-size: 15px; line-height: 1.8;
+    }
+    .text-content:empty:before {
+      content: attr(data-placeholder); color: #BBB;
+    }
+
+    /* 이미지 블록 */
+    .image-block-content { padding: 0; }
+    .image-preview {
+      width: 100%; max-height: 400px; object-fit: cover; display: block;
+      background: #F0F0EB;
+    }
+    .image-meta {
+      padding: 10px 14px; display: flex; justify-content: space-between;
+      align-items: center; font-size: 12px; color: #888; background: #FAFAF8;
+    }
+    .image-caption-input {
+      width: 100%; padding: 10px 14px; border: none; border-top: 1px solid #F0F0EB;
+      font-size: 13px; font-family: inherit; background: white;
+    }
+    .image-caption-input:focus { outline: none; background: #FFF8F0; }
+    .upload-progress {
+      height: 3px; background: #E5E5E0; position: relative; overflow: hidden;
+    }
+    .upload-progress-bar {
+      height: 100%; background: #B8956A; transition: width 0.3s;
+      width: 0%;
+    }
+
+    .add-block-bar {
+      display: flex; gap: 8px; margin-top: 16px; margin-bottom: 24px;
+    }
+    .add-block-bar button { flex: 1; }
+
+    .summary-bar {
+      position: fixed; bottom: 0; left: 0; right: 0;
+      background: white; border-top: 1px solid #E5E5E0;
+      padding: 12px 24px; display: flex; justify-content: space-between;
+      align-items: center; z-index: 50; box-shadow: 0 -4px 12px rgba(0,0,0,0.04);
+    }
+    .summary-info { font-size: 13px; color: #666; }
+    .summary-info strong { color: #1A1A1A; font-weight: 700; }
   </style>
 </head>
 <body>
   <div class="container">
     <div class="header">
-      <h1>빠른 작성 — 시공 사례</h1>
+      <h1>빠른 작성 - 시공 사례</h1>
       <div class="header-actions">
         <a href="/admin/" class="btn btn-secondary">기존 CMS로</a>
         <button class="btn btn-primary" id="publishBtn" disabled>발행</button>
@@ -180,11 +185,11 @@
         <div class="meta-grid">
           <div class="field">
             <label>제목</label>
-            <input type="text" id="title" placeholder="예: 강남 카페 시공">
+            <input type="text" id="title" placeholder="예: 흐칵 파출소 도끼다시 폴리싱">
           </div>
           <div class="field">
             <label>지역</label>
-            <input type="text" id="location" placeholder="예: 서울 강남구">
+            <input type="text" id="location" placeholder="예: 경기도">
           </div>
           <div class="field">
             <label>공간 종류</label>
@@ -210,101 +215,287 @@
           </div>
           <div class="field" style="grid-column: 1 / -1;">
             <label>사용 컬러/규사 (선택)</label>
-            <input type="text" id="specs" placeholder="예: 베이지 톤 / 중간 규사 / 매트 마감">
+            <input type="text" id="specs" placeholder="예: 도끼다시 톤 매칭 / 1일 양생 미장 / 1500방 마감">
           </div>
         </div>
       </div>
 
       <div class="drop-zone" id="dropZone">
         <div class="drop-zone-icon">📷</div>
-        <p><strong>여기에 사진을 드래그</strong>하거나 클릭해서 선택하세요</p>
-        <p style="margin-top: 8px; font-size: 12px;">한 번에 여러 장 가능 · JPG, PNG, WEBP</p>
+        <p><strong>여기에 사진을 드래그</strong>하거나 클릭해서 선택</p>
+        <p style="margin-top: 6px; font-size: 12px;">여러 장 한 번에 가능 · 자동으로 순서대로 추가됨</p>
         <input type="file" id="fileInput" multiple accept="image/*" style="display: none;">
       </div>
 
+      <div class="add-block-bar">
+        <button class="btn-ghost" onclick="addTextBlock()">＋ 텍스트 추가</button>
+        <button class="btn-ghost" onclick="document.getElementById('fileInput').click()">＋ 사진 추가</button>
+      </div>
+
       <div class="blocks-area" id="blocksArea">
-        <div class="empty-state">
-          사진을 추가하면 여기에 블록이 나타납니다.<br>
-          텍스트 블록과 사진 블록을 자유롭게 배치하세요.
+        <div class="empty-state" id="emptyState">
+          위 영역에 사진을 드래그하거나, 텍스트 추가 버튼을 눌러 시작하세요.
         </div>
       </div>
     </div>
   </div>
 
+  <div class="summary-bar" id="summaryBar" style="display: none;">
+    <div class="summary-info">
+      <span><strong id="blockCount">0</strong>개 블록</span>
+      <span style="margin-left: 16px;">사진 <strong id="imageCount">0</strong>장</span>
+    </div>
+    <button class="btn btn-primary" id="publishBtn2" disabled>발행</button>
+  </div>
+
   <script>
-    // 1단계: 로그인 상태 확인만
-    const TOKEN_KEY = 'decap-cms-user';
-    
-    function checkLogin() {
+    // ========== 로그인 ==========
+    function getToken() {
       try {
-        const stored = localStorage.getItem(TOKEN_KEY) || localStorage.getItem('netlify-cms-user');
-        if (stored) {
-          const user = JSON.parse(stored);
-          if (user.token) {
-            return user.token;
-          }
-        }
-        // 다른 키 패턴들도 확인
         for (let i = 0; i < localStorage.length; i++) {
           const key = localStorage.key(i);
-          if (key && (key.includes('cms-user') || key.includes('gotrue'))) {
+          if (key && (key.includes('cms-user') || key.includes('netlify-cms-user') || key.includes('gotrue'))) {
             try {
               const val = JSON.parse(localStorage.getItem(key));
-              if (val.token) return val.token;
+              if (val && val.token) return val.token;
             } catch (e) {}
           }
         }
-      } catch (e) {
-        console.error('Token check failed:', e);
-      }
+      } catch (e) {}
       return null;
     }
 
-    const token = checkLogin();
-    if (token) {
+    const TOKEN = getToken();
+    const REPO = 'choi-hyuk-gi/florix-studio';
+    const BRANCH = 'main';
+
+    if (TOKEN) {
       document.getElementById('loginGate').style.display = 'none';
       document.getElementById('editor').style.display = 'block';
+      document.getElementById('summaryBar').style.display = 'flex';
       document.getElementById('publishBtn').disabled = false;
-      
-      // 오늘 날짜 기본값
+      document.getElementById('publishBtn2').disabled = false;
       const today = new Date().toISOString().split('T')[0];
       document.getElementById('date').value = today;
-      
-      showStatus('info', '로그인 확인됨. 사진을 드래그하거나 글을 작성해보세요.');
     }
 
-    function showStatus(type, message) {
+    function showStatus(type, msg) {
       const el = document.getElementById('status');
       el.className = 'status show ' + type;
-      el.textContent = message;
+      el.textContent = msg;
+      if (type === 'success') setTimeout(() => { el.className = 'status'; }, 4000);
     }
 
-    // 드롭존 기본 동작 (1단계: 아직 업로드 안 함, UI만 확인)
+    // ========== 블록 시스템 ==========
+    let blocks = [];
+    let blockIdCounter = 0;
+
+    function nextId() { return 'b' + (++blockIdCounter); }
+
+    function updateSummary() {
+      const imgCount = blocks.filter(b => b.type === 'image').length;
+      document.getElementById('blockCount').textContent = blocks.length;
+      document.getElementById('imageCount').textContent = imgCount;
+      document.getElementById('emptyState').style.display = blocks.length ? 'none' : 'block';
+    }
+
+    function addTextBlock(content = '') {
+      const id = nextId();
+      blocks.push({ id, type: 'text', content });
+      renderBlocks();
+      updateSummary();
+      // 새로 추가한 블록에 포커스
+      setTimeout(() => {
+        const el = document.querySelector(`#${id} .text-content`);
+        if (el) el.focus();
+      }, 50);
+    }
+
+    function addImageBlock(file) {
+      const id = nextId();
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const block = {
+          id, type: 'image',
+          file, filename: file.name,
+          dataUrl: e.target.result,
+          caption: '',
+          uploaded: false,
+          uploading: false,
+          githubPath: null
+        };
+        blocks.push(block);
+        renderBlocks();
+        updateSummary();
+      };
+      reader.readAsDataURL(file);
+    }
+
+    function deleteBlock(id) {
+      blocks = blocks.filter(b => b.id !== id);
+      renderBlocks();
+      updateSummary();
+    }
+
+    function moveBlock(id, dir) {
+      const idx = blocks.findIndex(b => b.id === id);
+      const newIdx = idx + dir;
+      if (newIdx < 0 || newIdx >= blocks.length) return;
+      [blocks[idx], blocks[newIdx]] = [blocks[newIdx], blocks[idx]];
+      renderBlocks();
+    }
+
+    function updateTextBlock(id, html) {
+      const b = blocks.find(b => b.id === id);
+      if (b) b.content = html;
+    }
+
+    function updateCaption(id, caption) {
+      const b = blocks.find(b => b.id === id);
+      if (b) b.caption = caption;
+    }
+
+    function renderBlocks() {
+      const area = document.getElementById('blocksArea');
+      area.innerHTML = blocks.length === 0
+        ? '<div class="empty-state" id="emptyState">위 영역에 사진을 드래그하거나, 텍스트 추가 버튼을 눌러 시작하세요.</div>'
+        : blocks.map((b, i) => renderBlock(b, i)).join('');
+      
+      // 이벤트 바인딩
+      blocks.forEach(b => {
+        if (b.type === 'text') {
+          const el = document.querySelector(`#${b.id} .text-content`);
+          if (el) {
+            el.addEventListener('input', () => updateTextBlock(b.id, el.innerHTML));
+            el.addEventListener('paste', (e) => {
+              e.preventDefault();
+              const text = (e.clipboardData || window.clipboardData).getData('text');
+              document.execCommand('insertText', false, text);
+            });
+          }
+        } else if (b.type === 'image') {
+          const cap = document.querySelector(`#${b.id} .image-caption-input`);
+          if (cap) cap.addEventListener('input', () => updateCaption(b.id, cap.value));
+        }
+      });
+    }
+
+    function renderBlock(b, idx) {
+      const isFirst = idx === 0;
+      const isLast = idx === blocks.length - 1;
+      const moveButtons = `
+        <button class="icon-btn" onclick="moveBlock('${b.id}', -1)" ${isFirst ? 'disabled' : ''} title="위로">↑</button>
+        <button class="icon-btn" onclick="moveBlock('${b.id}', 1)" ${isLast ? 'disabled' : ''} title="아래로">↓</button>
+        <button class="icon-btn" onclick="deleteBlock('${b.id}')" title="삭제" style="color: #C62828;">×</button>
+      `;
+
+      if (b.type === 'text') {
+        return `
+          <div class="block" id="${b.id}">
+            <div class="block-header">
+              <span class="block-type">텍스트</span>
+              <div class="block-actions">${moveButtons}</div>
+            </div>
+            <div class="text-toolbar">
+              <button class="tool-btn" onmousedown="event.preventDefault();" onclick="fmt('bold')"><b>B</b></button>
+              <button class="tool-btn" onmousedown="event.preventDefault();" onclick="fmt('italic')"><i>I</i></button>
+              <button class="tool-btn" onmousedown="event.preventDefault();" onclick="fmt('underline')"><u>U</u></button>
+              <div class="tool-divider"></div>
+              <button class="tool-btn" onmousedown="event.preventDefault();" onclick="fmtSize('h2')" title="큰 제목">H1</button>
+              <button class="tool-btn" onmousedown="event.preventDefault();" onclick="fmtSize('h3')" title="중간 제목">H2</button>
+              <button class="tool-btn" onmousedown="event.preventDefault();" onclick="fmtSize('p')" title="일반">본문</button>
+              <div class="tool-divider"></div>
+              <button class="tool-btn color-btn" onmousedown="event.preventDefault();" onclick="fmtColor('#1A1A1A')" style="background:#1A1A1A;" title="검정"></button>
+              <button class="tool-btn color-btn" onmousedown="event.preventDefault();" onclick="fmtColor('#B8956A')" style="background:#B8956A;" title="브라운"></button>
+              <button class="tool-btn color-btn" onmousedown="event.preventDefault();" onclick="fmtColor('#C62828')" style="background:#C62828;" title="빨강"></button>
+              <button class="tool-btn color-btn" onmousedown="event.preventDefault();" onclick="fmtColor('#888888')" style="background:#888;" title="회색"></button>
+              <div class="tool-divider"></div>
+              <button class="tool-btn" onmousedown="event.preventDefault();" onclick="insertEmoji()" title="이모지">😊</button>
+              <button class="tool-btn" onmousedown="event.preventDefault();" onclick="fmt('insertUnorderedList')" title="목록">•</button>
+              <button class="tool-btn" onmousedown="event.preventDefault();" onclick="fmt('removeFormat')" title="서식 지우기">↺</button>
+            </div>
+            <div class="text-content" contenteditable="true" data-placeholder="여기에 글을 입력하세요...">${b.content}</div>
+          </div>
+        `;
+      } else if (b.type === 'image') {
+        const status = b.uploaded ? `<span style="color:#2E7D32;">✓ 업로드됨</span>`
+          : b.uploading ? `<span style="color:#1A56DB;">업로드 중...</span>`
+          : `<span style="color:#888;">대기 중</span>`;
+        const progress = b.uploading ? `
+          <div class="upload-progress">
+            <div class="upload-progress-bar" style="width: ${b.progress || 0}%"></div>
+          </div>` : '';
+        return `
+          <div class="block" id="${b.id}">
+            <div class="block-header">
+              <span class="block-type">사진 ${idx + 1}</span>
+              <div class="block-actions">${moveButtons}</div>
+            </div>
+            <div class="image-block-content">
+              <img src="${b.dataUrl}" class="image-preview" alt="">
+              ${progress}
+              <div class="image-meta">
+                <span title="${b.filename}">${b.filename.length > 30 ? b.filename.slice(0, 30) + '...' : b.filename}</span>
+                ${status}
+              </div>
+              <input type="text" class="image-caption-input" placeholder="사진 설명 (선택)" value="${b.caption || ''}">
+            </div>
+          </div>
+        `;
+      }
+    }
+
+    // ========== 텍스트 서식 ==========
+    function fmt(cmd) { document.execCommand(cmd, false, null); }
+    function fmtSize(tag) {
+      const sel = window.getSelection();
+      if (!sel.rangeCount) return;
+      document.execCommand('formatBlock', false, tag);
+    }
+    function fmtColor(color) { document.execCommand('foreColor', false, color); }
+    
+    const EMOJIS = ['😊','👍','✨','🔥','💡','📷','🏠','🏢','☕','🎨','✓','★','→','•','▪','◆'];
+    function insertEmoji() {
+      const emoji = prompt('이모지 선택 (또는 직접 입력):\n' + EMOJIS.join(' '), '✨');
+      if (emoji) document.execCommand('insertText', false, emoji);
+    }
+
+    // ========== 파일 드롭 ==========
     const dropZone = document.getElementById('dropZone');
     const fileInput = document.getElementById('fileInput');
-    
-    dropZone.addEventListener('click', () => fileInput.click());
-    
+
+    dropZone.addEventListener('click', (e) => {
+      if (e.target.tagName !== 'INPUT') fileInput.click();
+    });
     dropZone.addEventListener('dragover', (e) => {
       e.preventDefault();
       dropZone.classList.add('dragging');
     });
-    
-    dropZone.addEventListener('dragleave', () => {
-      dropZone.classList.remove('dragging');
-    });
-    
+    dropZone.addEventListener('dragleave', () => dropZone.classList.remove('dragging'));
     dropZone.addEventListener('drop', (e) => {
       e.preventDefault();
       dropZone.classList.remove('dragging');
       const files = Array.from(e.dataTransfer.files).filter(f => f.type.startsWith('image/'));
-      showStatus('info', files.length + '장 인식됨. 2단계에서 실제 업로드 기능이 추가됩니다.');
+      files.forEach(f => addImageBlock(f));
+      if (files.length > 0) showStatus('info', files.length + '장 추가됨. 발행 시 자동으로 업로드됩니다.');
     });
-    
     fileInput.addEventListener('change', (e) => {
       const files = Array.from(e.target.files);
-      showStatus('info', files.length + '장 인식됨. 2단계에서 실제 업로드 기능이 추가됩니다.');
+      files.forEach(f => addImageBlock(f));
+      fileInput.value = '';
+      if (files.length > 0) showStatus('info', files.length + '장 추가됨. 발행 시 자동으로 업로드됩니다.');
     });
+
+    // 페이지 전체 드래그 차단 (드롭존 외)
+    document.addEventListener('dragover', (e) => e.preventDefault());
+    document.addEventListener('drop', (e) => e.preventDefault());
+
+    // ========== 발행 (3단계에서 완성) ==========
+    function publishStub() {
+      showStatus('info', '발행 기능은 3단계에서 활성화됩니다. 지금은 블록 작성만 가능합니다.');
+    }
+    document.getElementById('publishBtn').addEventListener('click', publishStub);
+    document.getElementById('publishBtn2').addEventListener('click', publishStub);
   </script>
 </body>
 </html>
