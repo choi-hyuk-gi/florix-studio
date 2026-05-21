@@ -12,29 +12,18 @@ export async function getStaticPaths() {
   }));
 }
 
-interface Props {
-  work: CollectionEntry<'works'>;
-}
-
+interface Props { work: CollectionEntry<'works'>; }
 const { work } = Astro.props;
-const { Content } = await render(work);
 
 const formattedDate = work.data.date.toLocaleDateString('ko-KR', {
-  year: 'numeric',
-  month: 'long',
-  day: 'numeric'
+  year: 'numeric', month: 'long', day: 'numeric'
 });
 ---
 
-<Layout
-  title={`${work.data.title} | 시공 사례 | 플로릭스 스튜디오`}
-  description={`${work.data.location} / ${work.data.category} 콘크리트 폴리싱 시공 사례. ${work.data.specs || '플로릭스 스튜디오의 작업'}`}
-  image={work.data.thumbnail}
->
+<Layout title={`${work.data.title} | 플로릭스 스튜디오`} description={`${work.data.location} / ${work.data.category} 콘크리트 폴리싱`}>
   <Nav />
-
   <main class="min-h-screen bg-bg pt-24 pb-24">
-    <article class="max-w-5xl mx-auto px-6 lg:px-12">
+    <article class="max-w-4xl mx-auto px-6 lg:px-12">
 
       <nav class="mb-12 text-sm text-mood">
         <a href="/" class="hover:text-accent transition-colors">홈</a>
@@ -49,128 +38,77 @@ const formattedDate = work.data.date.toLocaleDateString('ko-KR', {
           <div class="w-8 h-px bg-accent"></div>
           <span class="text-[11px] font-bold tracking-[0.3em] uppercase text-accent">{work.data.category}</span>
         </div>
-        <h1 class="text-4xl md:text-6xl font-black text-text leading-[0.95] tracking-[-0.045em]">
+        <h1 class="text-4xl md:text-6xl font-black text-text leading-[0.95] tracking-[-0.045em] mb-12">
           {work.data.title}
         </h1>
-
-        <dl class="mt-12 grid grid-cols-2 md:grid-cols-4 gap-y-6 gap-x-8 pt-8 border-t border-line">
+        <dl class="grid grid-cols-2 md:grid-cols-4 gap-y-6 gap-x-8 pt-8 border-t border-line">
           <div>
             <dt class="text-[10px] font-bold tracking-[0.2em] uppercase text-mood/70 mb-2">Location</dt>
-            <dd class="text-sm md:text-base text-text font-medium">{work.data.location}</dd>
+            <dd class="text-sm text-text font-medium">{work.data.location}</dd>
           </div>
           {work.data.area && (
             <div>
               <dt class="text-[10px] font-bold tracking-[0.2em] uppercase text-mood/70 mb-2">Area</dt>
-              <dd class="text-sm md:text-base text-text font-medium">{work.data.area}㎡</dd>
+              <dd class="text-sm text-text font-medium">{work.data.area}㎡</dd>
             </div>
           )}
           <div>
             <dt class="text-[10px] font-bold tracking-[0.2em] uppercase text-mood/70 mb-2">Duration</dt>
-            <dd class="text-sm md:text-base text-text font-medium">{work.data.duration}</dd>
+            <dd class="text-sm text-text font-medium">{work.data.duration}</dd>
           </div>
           <div>
             <dt class="text-[10px] font-bold tracking-[0.2em] uppercase text-mood/70 mb-2">Date</dt>
-            <dd class="text-sm md:text-base text-text font-medium">{formattedDate}</dd>
+            <dd class="text-sm text-text font-medium">{formattedDate}</dd>
           </div>
           {work.data.specs && (
             <div class="col-span-2 md:col-span-4">
               <dt class="text-[10px] font-bold tracking-[0.2em] uppercase text-mood/70 mb-2">Specs</dt>
-              <dd class="text-sm md:text-base text-text font-medium">{work.data.specs}</dd>
+              <dd class="text-sm text-text font-medium">{work.data.specs}</dd>
             </div>
           )}
         </dl>
       </header>
 
-      <div class="relative aspect-[16/9] bg-gradient-to-br from-[#D8CDB4] via-[#C9BCA0] to-[#B8AB8E] mb-16 overflow-hidden">
-        <div class="absolute inset-0 flex items-center justify-center opacity-30">
-          <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" class="text-text/40">
-            <rect x="3" y="3" width="18" height="18" rx="2" />
-            <circle cx="8.5" cy="8.5" r="1.5" />
-            <polyline points="21 15 16 10 5 21" />
-          </svg>
+      {work.data.thumbnail && (
+        <div class="mb-16 aspect-[16/9] overflow-hidden">
+          <img src={work.data.thumbnail} alt={work.data.title} class="w-full h-full object-cover" />
         </div>
-        <div class="absolute bottom-6 left-6 text-[10px] tracking-[0.2em] uppercase text-text/60">
-          Photo coming soon
-        </div>
-      </div>
+      )}
 
-      <div class="prose-content max-w-3xl mx-auto">
-        <Content />
-      </div>
-
-      {work.data.gallery && work.data.gallery.length > 0 && (
-        <div class="mt-20 pt-16 border-t border-line">
-          <div class="flex items-center gap-3 mb-8">
-            <div class="w-8 h-px bg-accent"></div>
-            <span class="text-[11px] font-bold tracking-[0.3em] uppercase text-accent">Gallery</span>
-          </div>
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {work.data.gallery.map((img, i) => (
-              <div class="aspect-[4/3] bg-gradient-to-br from-[#D8CDB4] via-[#C9BCA0] to-[#B8AB8E] relative overflow-hidden">
-                <div class="absolute bottom-4 right-4 text-[10px] tracking-[0.2em] text-text/40 font-mono">
-                  {String(i + 1).padStart(2, '0')}
-                </div>
+      {work.data.blocks && work.data.blocks.length > 0 && (
+        <div class="space-y-10">
+          {work.data.blocks.map((block) => (
+            block.type === 'image' ? (
+              <figure class="w-full">
+                <img src={block.src} alt={block.caption ?? work.data.title} class="w-full object-cover" />
+                {block.caption && (
+                  <figcaption class="mt-3 text-xs text-mood text-center tracking-wide">{block.caption}</figcaption>
+                )}
+              </figure>
+            ) : (
+              <div class="prose-content max-w-none">
+                <Fragment set:html={block.content} />
               </div>
-            ))}
-          </div>
+            )
+          ))}
         </div>
       )}
 
       <div class="mt-24 pt-16 border-t border-line flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
-        <a href="/works/" class="text-sm text-mood hover:text-accent transition-colors">
-          모든 시공 사례 보기
-        </a>
-        <a href="/#contact" class="inline-flex items-center gap-3 px-8 py-4 bg-text text-bg text-sm font-bold tracking-wider hover:bg-accent transition-colors">
-          이런 공간 시공 문의
-        </a>
+        <a href="/works/" class="text-sm text-mood hover:text-accent transition-colors">← 모든 작업 보기</a>
+        <a href="/#cta" class="inline-flex items-center gap-3 px-8 py-4 bg-text text-bg text-sm font-bold tracking-wider hover:bg-accent transition-colors">이런 공간 시공 문의 →</a>
       </div>
 
     </article>
   </main>
-
   <Footer />
 </Layout>
 
 <style>
-  .prose-content :global(h2) {
-    font-size: 1.5rem;
-    font-weight: 800;
-    color: var(--color-text);
-    margin-top: 3rem;
-    margin-bottom: 1rem;
-    letter-spacing: -0.02em;
-  }
-  .prose-content :global(h2:first-child) {
-    margin-top: 0;
-  }
-  .prose-content :global(p) {
-    font-size: 1rem;
-    line-height: 1.8;
-    color: var(--color-text);
-    margin-bottom: 1.25rem;
-  }
-  .prose-content :global(ul) {
-    margin: 1.5rem 0;
-    padding-left: 0;
-    list-style: none;
-  }
-  .prose-content :global(li) {
-    position: relative;
-    padding-left: 1.5rem;
-    margin-bottom: 0.75rem;
-    line-height: 1.7;
-  }
-  .prose-content :global(li::before) {
-    content: "";
-    position: absolute;
-    left: 0;
-    top: 0.7em;
-    width: 0.5rem;
-    height: 1px;
-    background: var(--color-accent);
-  }
-  .prose-content :global(strong) {
-    font-weight: 700;
-    color: var(--color-text);
-  }
+  .prose-content :global(h2) { font-size: 1.5rem; font-weight: 800; color: var(--color-text); margin-top: 2.5rem; margin-bottom: 0.75rem; letter-spacing: -0.02em; }
+  .prose-content :global(p) { font-size: 1rem; line-height: 1.85; color: var(--color-text); margin-bottom: 1rem; }
+  .prose-content :global(ul) { margin: 1.25rem 0; padding-left: 0; list-style: none; }
+  .prose-content :global(li) { position: relative; padding-left: 1.25rem; margin-bottom: 0.6rem; line-height: 1.75; }
+  .prose-content :global(li::before) { content: ""; position: absolute; left: 0; top: 0.75em; width: 0.4rem; height: 1px; background: var(--color-accent); }
+  .prose-content :global(strong) { font-weight: 700; }
 </style>
