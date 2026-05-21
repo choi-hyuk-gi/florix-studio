@@ -177,11 +177,33 @@
     .text-content h3 { font-size: 1.2em; font-weight: 700; margin: 0.5em 0; }
     .text-content ul { padding-left: 1.5em; margin: 0.5em 0; }
 
-    .image-block-content { padding: 0; }
+    .image-block-content { padding: 0; position: relative; }
     .image-preview {
       width: 100%; max-height: 500px; object-fit: contain; display: block;
       background: #F0F0EB;
     }
+    .thumbnail-badge {
+      position: absolute; top: 12px; left: 12px;
+      background: #B8956A; color: white;
+      padding: 6px 12px; border-radius: 16px;
+      font-size: 11px; font-weight: 700;
+      letter-spacing: 0.05em;
+      box-shadow: 0 2px 8px rgba(184, 149, 106, 0.4);
+      z-index: 5; pointer-events: none;
+      display: flex; align-items: center; gap: 4px;
+    }
+    .thumbnail-toggle-btn {
+      background: white; border: 1px solid #E5E5E0; border-radius: 4px;
+      padding: 6px 10px; cursor: pointer; font-size: 11px; font-weight: 600;
+      font-family: inherit; transition: all 0.15s;
+      display: inline-flex; align-items: center; gap: 4px;
+      min-height: 32px;
+    }
+    .thumbnail-toggle-btn:hover { border-color: #B8956A; color: #B8956A; }
+    .thumbnail-toggle-btn.active {
+      background: #B8956A; color: white; border-color: #B8956A;
+    }
+    .thumbnail-toggle-btn.active:hover { background: #A38559; }
     .image-meta {
       padding: 10px 14px; display: flex; justify-content: space-between;
       align-items: center; font-size: 12px; color: #888; background: #FAFAF8;
@@ -528,7 +550,8 @@
               caption: b.caption,
               uploaded: b.uploaded,
               githubPath: b.githubPath,
-              dataUrl: b.uploaded ? null : b.dataUrl
+              dataUrl: b.uploaded ? null : b.dataUrl,
+              isThumbnail: b.isThumbnail || false
             };
           }
         });
@@ -616,7 +639,8 @@
                 githubPath: b.githubPath || null,
                 dataUrl: b.dataUrl || (b.githubPath ? b.githubPath : null),
                 file: null,
-                missingFile: !b.uploaded && !b.dataUrl
+                missingFile: !b.uploaded && !b.dataUrl,
+                isThumbnail: b.isThumbnail || false
               });
             }
           });
@@ -688,14 +712,32 @@
           dataUrl: e.target.result,
           caption: '',
           uploaded: false, uploading: false,
-          githubPath: null
+          githubPath: null,
+          isThumbnail: false
         };
         insertBlock(block);
+        // 첫 사진이면 자동으로 대표 사진으로 설정
+        const imageBlocks = blocks.filter(function(b) { return b.type === 'image'; });
+        if (imageBlocks.length === 1) {
+          block.isThumbnail = true;
+        }
         renderBlocks();
         updateSummary();
         scheduleSave();
       };
       reader.readAsDataURL(file);
+    }
+
+    function toggleThumbnail(id) {
+      // 모든 사진 블록 isThumbnail false로
+      blocks.forEach(function(b) {
+        if (b.type === 'image') b.isThumbnail = false;
+      });
+      // 클릭한 것만 true로
+      const target = blocks.find(function(b) { return b.id === id; });
+      if (target) target.isThumbnail = true;
+      renderBlocks();
+      scheduleSave();
     }
 
     function insertAt(index, type) {
@@ -834,13 +876,18 @@
           : '';
         const shortName = b.filename.length > 40 ? b.filename.slice(0, 40) + '...' : b.filename;
         const imgSrc = b.dataUrl || b.githubPath || '';
+        const thumbBadge = b.isThumbnail ? '<div class="thumbnail-badge">⭐ 대표 사진</div>' : '';
+        const thumbBtn = b.isThumbnail
+          ? '<button class="thumbnail-toggle-btn active" onclick="toggleThumbnail(\'' + b.id + '\')" title="대표 사진 (메인/카드에 노출)">⭐ 대표 사진</button>'
+          : '<button class="thumbnail-toggle-btn" onclick="toggleThumbnail(\'' + b.id + '\')" title="이 사진을 대표 사진으로 설정">☆ 대표로 설정</button>';
         return '' +
           '<div class="block" id="' + b.id + '">' +
             '<div class="block-header">' +
               '<span class="block-type">사진 ' + (idx + 1) + '</span>' +
-              '<div class="block-actions">' + moveButtons + '</div>' +
+              '<div class="block-actions">' + thumbBtn + moveButtons + '</div>' +
             '</div>' +
             '<div class="image-block-content">' +
+              thumbBadge +
               (imgSrc ? '<img src="' + imgSrc + '" class="image-preview" alt="">' : '<div style="padding:40px;text-align:center;color:#999;">이미지 미리보기 없음</div>') +
               progress +
               '<div class="image-meta">' +
@@ -1101,9 +1148,12 @@
       fm += 'category: ' + yamlString(meta.category) + '\n';
       fm += 'date: ' + meta.date + '\n';
       
+      // thumbnail: 사용자가 ⭐로 지정한 사진 우선, 없으면 첫 사진
+      const userThumb = blocks.find(function(b) { return b.type === 'image' && b.isThumbnail && b.githubPath; });
       const firstImage = blocks.find(function(b) { return b.type === 'image' && b.githubPath; });
-      if (firstImage) {
-        fm += 'thumbnail: ' + yamlString(firstImage.githubPath) + '\n';
+      const thumbnail = userThumb || firstImage;
+      if (thumbnail) {
+        fm += 'thumbnail: ' + yamlString(thumbnail.githubPath) + '\n';
       }
       if (meta.specs) fm += 'specs: ' + yamlString(meta.specs) + '\n';
       fm += 'duration: ' + yamlString(meta.duration || '1일 완공') + '\n';
