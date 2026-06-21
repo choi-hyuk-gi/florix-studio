@@ -195,6 +195,10 @@ body{font-family:'Noto Sans KR',sans-serif;background:#FAFAF8;color:#1A1A1A;min-
   .header-actions{gap:6px;width:100%}
   .btn{padding:8px 11px;font-size:12px}
 }
+
+.img-wrap .img-replace-hint{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);background:rgba(0,0,0,.7);color:#fff;padding:8px 16px;border-radius:6px;font-size:13px;opacity:0;transition:opacity .2s;pointer-events:none}
+.img-wrap:hover .img-replace-hint{opacity:1}
+.img-wrap:hover img{filter:brightness(.85)}
 </style>
 </head>
 <body>
@@ -665,6 +669,42 @@ function addImageBlock(file){
   reader.readAsDataURL(file);
 }
 
+// 사진 1장만 교체 (네이버 블로그처럼 그 자리만 바꿈)
+let _replaceTargetId=null;
+function replaceImage(blockId){
+  _replaceTargetId=blockId;
+  let inp=document.getElementById('replaceFileInput');
+  if(!inp){
+    inp=document.createElement('input');
+    inp.type='file';inp.accept='image/*';inp.id='replaceFileInput';
+    inp.style.display='none';
+    document.body.appendChild(inp);
+    inp.addEventListener('change',e=>{
+      const file=e.target.files[0];
+      inp.value='';
+      if(!file||!_replaceTargetId)return;
+      const b=blocks.find(x=>x.id===_replaceTargetId);
+      if(!b)return;
+      const reader=new FileReader();
+      reader.onload=ev=>{
+        // 그 블록의 사진만 교체. 업로드 상태 리셋 -> 발행 시 새로 올라감
+        b.file=file;
+        b.filename=file.name;
+        b.dataUrl=ev.target.result;
+        b.uploaded=false;
+        b.existing=false;
+        b.uploadedPath=null;
+        b.src=null;
+        renderBlocks();updateSummary();markDirty();
+        showStatus('info','사진을 바꿨어요. 발행하면 반영됩니다');
+      };
+      reader.readAsDataURL(file);
+      _replaceTargetId=null;
+    });
+  }
+  inp.click();
+}
+
 function deleteBlock(id){
   if(!confirm('이 블록을 삭제할까요?'))return;
   blocks=blocks.filter(b=>b.id!==id);
@@ -859,6 +899,7 @@ function renderBlock(b,i){
     '</div>';
   }else if(b.type==='image'){
     const star='<button class="icon-btn star-btn'+(b.isThumbnail?' active':'')+'" onclick="setThumbnail(\''+b.id+'\')" title="'+(b.isThumbnail?'대표 사진':'대표로 설정')+'">'+(b.isThumbnail?'⭐':'☆')+'</button>';
+    const replaceBtn='<button class="icon-btn" onclick="replaceImage(\''+b.id+'\')" title="사진 바꾸기" style="color:#1A56DB">⇄</button>';
     const stat=b.existing?'<span style="color:#888">📦 기존 사진</span>':
                 b.uploaded?'<span style="color:#2E7D32">✓ 업로드됨</span>':
                 b.uploading?'<span style="color:#1A56DB">업로드 중...</span>':
@@ -868,10 +909,10 @@ function renderBlock(b,i){
     const fnShort=fn.length>30?fn.slice(0,30)+'...':fn;
     const src=b.dataUrl||b.src;
     return '<div class="block" id="'+b.id+'">'+
-      '<div class="block-header"><span class="block-type">사진 '+(blocks.slice(0,i+1).filter(x=>x.type==='image').length)+'</span><div class="block-actions">'+star+actions+'</div></div>'+
+      '<div class="block-header"><span class="block-type">사진 '+(blocks.slice(0,i+1).filter(x=>x.type==='image').length)+'</span><div class="block-actions">'+star+replaceBtn+actions+'</div></div>'+
       '<div class="image-block-content">'+
         (b.isThumbnail?'<div class="thumb-badge">⭐ 대표</div>':'')+
-        '<img src="'+src+'" class="image-preview" alt="" onerror="this.style.background=\'#FEE\';this.alt=\'이미지 로드 실패\'">'+
+        '<div class="img-wrap" style="position:relative;cursor:pointer" onclick="replaceImage(\''+b.id+'\')" title="클릭해서 사진 바꾸기"><img src="'+src+'" class="image-preview" alt="" onerror="this.style.background=\'#FEE\';this.alt=\'이미지 로드 실패\'"><div class="img-replace-hint">📷 클릭해서 바꾸기</div></div>'+
         prog+
         '<div class="image-meta"><span class="filename" title="'+fn+'">'+fnShort+'</span><span class="status-text">'+stat+'</span></div>'+
         '<input type="text" class="caption-input" placeholder="사진 설명 (선택)" value="'+(b.caption||'').replace(/"/g,'&quot;')+'">'+
