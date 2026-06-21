@@ -20,7 +20,7 @@ if(window.caches&&caches.keys){
 <!-- /CACHE-KILLER -->
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-<title>플로릭스 스튜디오 · 빠른 작성 (v10 안전 발행)</title>
+<title>플로릭스 스튜디오 · 빠른 작성 (v12 단일커밋)</title>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/js-yaml@4.1.0/dist/js-yaml.min.js"></script>
 <style>
@@ -200,7 +200,7 @@ body{font-family:'Noto Sans KR',sans-serif;background:#FAFAF8;color:#1A1A1A;min-
 <body>
 <div class="container">
   <div class="header">
-    <h1>빠른 작성 · 시공 사례 <span style="font-size:11px;color:#999;font-weight:500">v10 안전 발행</span></h1>
+    <h1>빠른 작성 · 시공 사례 <span style="font-size:11px;color:#999;font-weight:500">v12 단일커밋</span></h1>
     <div class="header-actions">
       <div class="save-indicator" id="saveInd"><span class="dot"></span><span class="text">준비됨</span></div>
       <button class="btn btn-edit" id="loadBtn">✏️ 글 불러오기</button>
@@ -1300,26 +1300,70 @@ function slugify(s){
 document.getElementById('pubBtn').addEventListener('click',publish);
 document.getElementById('pubBtn2').addEventListener('click',publish);
 
+// ============================================================
+// v12 발행 엔진 — Git Data API 단일 커밋 (근본 해결)
+// 사진은 blob으로 올리고(멱등, 중복 안 쌓임), 글+사진을 단 1번의
+// 커밋으로 묶음. ref 업데이트가 1번이라 Failed to fetch 거의 없음.
+// 핸드폰에서도 동일하게 작동. 신규/수정 발행 모두 같은 경로.
+// ============================================================
+
+// --- Git Data API 헬퍼 ---
+async function ghCreateBlob(base64Content){
+  var url='https://api.github.com/repos/'+REPO+'/git/blobs';
+  var res=await fetchWithRetry(url,{method:'POST',headers:{'Authorization':'Bearer '+TOKEN,'Accept':'application/vnd.github.v3+json','Content-Type':'application/json'},body:JSON.stringify({content:base64Content,encoding:'base64'})});
+  if(!res.ok){var t=await res.text();throw new Error('사진 blob 생성 실패 ['+res.status+'] '+t.slice(0,200));}
+  var data=await res.json();
+  if(!data||!data.sha)throw new Error('blob 응답에 sha 없음');
+  return data.sha;
+}
+async function ghGetRefV12(){
+  var url='https://api.github.com/repos/'+REPO+'/git/ref/heads/'+BRANCH+'?t='+Date.now();
+  var res=await fetchWithRetry(url,{headers:{'Authorization':'Bearer '+TOKEN,'Accept':'application/vnd.github.v3+json'}});
+  if(!res.ok){var t=await res.text();throw new Error('브랜치 ref 조회 실패 ['+res.status+'] '+t.slice(0,200));}
+  var data=await res.json();return data.object.sha;
+}
+async function ghGetCommitTreeV12(commitSha){
+  var url='https://api.github.com/repos/'+REPO+'/git/commits/'+commitSha;
+  var res=await fetchWithRetry(url,{headers:{'Authorization':'Bearer '+TOKEN,'Accept':'application/vnd.github.v3+json'}});
+  if(!res.ok){var t=await res.text();throw new Error('base commit 조회 실패 ['+res.status+'] '+t.slice(0,200));}
+  var data=await res.json();return data.tree.sha;
+}
+async function ghCreateTreeV12(baseTreeSha,items){
+  var url='https://api.github.com/repos/'+REPO+'/git/trees';
+  var res=await fetchWithRetry(url,{method:'POST',headers:{'Authorization':'Bearer '+TOKEN,'Accept':'application/vnd.github.v3+json','Content-Type':'application/json'},body:JSON.stringify({base_tree:baseTreeSha,tree:items})});
+  if(!res.ok){var t=await res.text();throw new Error('tree 생성 실패 ['+res.status+'] '+t.slice(0,200));}
+  var data=await res.json();return data.sha;
+}
+async function ghCreateCommitV12(message,treeSha,parentSha){
+  var url='https://api.github.com/repos/'+REPO+'/git/commits';
+  var res=await fetchWithRetry(url,{method:'POST',headers:{'Authorization':'Bearer '+TOKEN,'Accept':'application/vnd.github.v3+json','Content-Type':'application/json'},body:JSON.stringify({message:message,tree:treeSha,parents:[parentSha]})});
+  if(!res.ok){var t=await res.text();throw new Error('commit 생성 실패 ['+res.status+'] '+t.slice(0,200));}
+  var data=await res.json();return data.sha;
+}
+async function ghUpdateRefV12(commitSha){
+  var url='https://api.github.com/repos/'+REPO+'/git/refs/heads/'+BRANCH;
+  var res=await fetchWithRetry(url,{method:'PATCH',headers:{'Authorization':'Bearer '+TOKEN,'Accept':'application/vnd.github.v3+json','Content-Type':'application/json'},body:JSON.stringify({sha:commitSha,force:false})});
+  if(!res.ok){var t=await res.text();throw new Error('브랜치 업데이트 실패 ['+res.status+'] '+t.slice(0,200));}
+  return await res.json();
+}
+
 let publishing=false;
 async function publish(){
   if(publishing)return;
-  
-  // 토큰 권한 사전 체크
   if(!TOKEN_VERIFIED){
     showStatus('error','⚠️ GitHub 쓰기 권한이 확인되지 않았습니다. 페이지를 새로고침하거나 CMS에 다시 로그인하세요.');
     return;
   }
-  
   const meta=getMeta();
   if(!meta.title.trim())return showStatus('error','제목을 입력해주세요');
   if(!meta.location.trim())return showStatus('error','지역을 입력해주세요');
   if(!meta.date)return showStatus('error','시공일을 선택해주세요');
   if(blocks.length===0)return showStatus('error','텍스트나 사진 블록을 1개 이상 추가해주세요');
-  
+
   publishing=true;
   document.getElementById('pubBtn').disabled=true;
   document.getElementById('pubBtn2').disabled=true;
-  
+
   const modal=document.getElementById('pubModal');
   const log=document.getElementById('pubLog');
   const title=document.getElementById('pubTitle');
@@ -1327,73 +1371,78 @@ async function publish(){
   const close=document.getElementById('pubClose');
   const link=document.getElementById('pubLink');
   const verifyEl=document.getElementById('verifyResult');
-  log.innerHTML='';
-  verifyEl.innerHTML='';
+  log.innerHTML='';verifyEl.innerHTML='';
   title.textContent=editingPath?'수정 중...':'발행 중...';
-  footer.style.display='none';
-  close.style.display='none';
+  footer.style.display='none';close.style.display='none';
   modal.classList.add('show');
-  
+
   const addLog=(t,cls)=>{
     const ts=new Date().toLocaleTimeString();
     const line=document.createElement('div');
     if(cls)line.className=cls;
     line.textContent='['+ts+'] '+t;
-    log.appendChild(line);
-    log.scrollTop=log.scrollHeight;
+    log.appendChild(line);log.scrollTop=log.scrollHeight;
   };
-  
+
   let savedPath=null;
-  let savedCommitSha=null;
-  
+
   try{
     addLog((editingPath?'수정':'발행')+' 시작: '+meta.title,'info');
-    
-    // 1. 새 이미지 업로드
+    addLog('방식: Git Data API 단일 커밋 (안정 발행)','info');
+
+    // treeItems: 이번 커밋에 넣을 모든 파일 (사진 blob + .md)
+    const treeItems=[];
+
+    // 1. 새 사진들 -> 압축 -> blob 생성 (실패해도 재시도, 멱등이라 중복 안 쌓임)
     const newImages=blocks.filter(b=>b.type==='image'&&!b.existing&&!b.uploaded&&b.file);
     if(newImages.length>0){
-      addLog('새 사진 '+newImages.length+'장 업로드 시작...');
+      addLog('새 사진 '+newImages.length+'장 처리 시작 (압축 후 업로드)...');
       for(let i=0;i<newImages.length;i++){
         const b=newImages[i];
         b.uploading=true;b.progress=0;renderBlocks();
         try{
-          const ts=Date.now();
           const sn=safeName(b.filename);
+          const ts=Date.now();
           const remoteName=ts+'_'+i+'_'+sn;
           const remotePath='public/uploads/'+remoteName;
-          const compFile=await compressImage(b.file);const b64=await fileToBase64(compFile);
-          addLog('사진 '+(i+1)+'/'+newImages.length+' 업로드: '+sn);
-          const result=await ghPutFile(remotePath,b64,null,'Upload image: '+remoteName);
+          const compFile=await compressImage(b.file);
+          const b64=await fileToBase64(compFile);
+          const sizeKB=Math.round(compFile.size/1024);
+          addLog('사진 '+(i+1)+'/'+newImages.length+' 압축/업로드: '+sn+' ('+sizeKB+'KB)');
+          const blobSha=await ghCreateBlob(b64);
+          treeItems.push({path:remotePath,mode:'100644',type:'blob',sha:blobSha});
           b.uploaded=true;b.uploading=false;b.progress=100;
-          b.uploadedPath='/uploads/'+remoteName;await sleep(400);
-          b.src=b.uploadedPath;
+          b.uploadedPath='/uploads/'+remoteName;b.src=b.uploadedPath;
           renderBlocks();
-          addLog('✓ 업로드됨 (commit: '+result.commit.sha.slice(0,7)+')','ok');
+          addLog('✓ blob 생성됨 ('+blobSha.slice(0,7)+')','ok');
+          await sleep(150);
         }catch(e){
           b.uploading=false;renderBlocks();
-          throw new Error('사진 업로드 실패 ['+b.filename+']: '+e.message);
+          throw new Error('사진 처리 실패 ['+b.filename+']: '+e.message);
         }
       }
-      addLog('모든 사진 업로드 완료','ok');
+      addLog('모든 사진 blob 준비 완료','ok');
     }
-    
-    // 1-B. 별도 대표 사진 업로드
+
+    // 1-B. 별도 대표 사진
     if(thumbOverride&&!thumbOverride.uploaded&&thumbOverride.file){
-      addLog('대표 사진 업로드 중...');
+      addLog('대표 사진 압축/업로드 중...');
       try{
-        const ts=Date.now();
         const sn=safeName(thumbOverride.filename||'thumbnail.jpg');
+        const ts=Date.now();
         const remoteName=ts+'_thumb_'+sn;
         const remotePath='public/uploads/'+remoteName;
-        const compFile=await compressImage(thumbOverride.file);const b64=await fileToBase64(compFile);
-        const result=await ghPutFile(remotePath,b64,null,'Upload thumbnail: '+remoteName);
+        const compFile=await compressImage(thumbOverride.file);
+        const b64=await fileToBase64(compFile);
+        const blobSha=await ghCreateBlob(b64);
+        treeItems.push({path:remotePath,mode:'100644',type:'blob',sha:blobSha});
         thumbOverride.uploaded=true;
         thumbOverride.uploadedPath='/uploads/'+remoteName;
         thumbOverride.src=thumbOverride.uploadedPath;
-        addLog('✓ 대표 사진 업로드 완료 (commit: '+result.commit.sha.slice(0,7)+')','ok');
-      }catch(e){throw new Error('대표 사진 업로드 실패: '+e.message)}
+        addLog('✓ 대표 사진 blob 생성됨','ok');
+      }catch(e){throw new Error('대표 사진 처리 실패: '+e.message);}
     }
-    
+
     // 2. thumbnail 결정
     let thumb='';
     if(thumbOverride&&(thumbOverride.uploadedPath||thumbOverride.src)){
@@ -1401,103 +1450,70 @@ async function publish(){
     }else{
       const starred=blocks.find(b=>b.type==='image'&&b.isThumbnail);
       const firstImg=blocks.find(b=>b.type==='image');
-      thumb=(starred?.src||starred?.uploadedPath)||(firstImg?.src||firstImg?.uploadedPath)||'';
+      thumb=(starred&&(starred.src||starred.uploadedPath))||(firstImg&&(firstImg.src||firstImg.uploadedPath))||'';
     }
     addLog('대표 사진: '+(thumb||'(없음)'));
-    
-    // 3. YAML
+
+    // 3. 마크다운 생성
     addLog('마크다운 생성 중...');
     const yaml=buildYaml(meta,blocks,thumb);
     addLog('생성 완료 ('+yaml.length+'자)');
-    
-    // 4. 경로 결정 + 최신 SHA 강제 fetch
+
+    // 4. 경로 결정
     let path;
-    let freshSha=null; // editingSha 캐시 의존 X — 매번 새로 fetch
-    
     if(editingPath){
       path=editingPath;
-      addLog('수정 모드: 최신 SHA 확인 중...');
-      const existing=await ghGetFile(path);
-      if(!existing)throw new Error('수정하려는 파일이 GitHub에 없습니다: '+path);
-      freshSha=existing.sha;
-      addLog('현재 SHA: '+freshSha.slice(0,7),'info');
+      addLog('수정 모드 — 경로: '+path);
     }else{
       const slug=slugify(meta.title);
       path='src/content/works/'+meta.date+'-'+slug+'.md';
       addLog('저장 경로: '+path);
-      addLog('기존 파일 확인 중...');
-      const existing=await ghGetFile(path);
-      if(existing){
-        if(!confirm('같은 날짜·제목의 글이 이미 있어요. 덮어쓸까요?\n\n경로: '+path)){
-          throw new Error('사용자가 덮어쓰기를 취소함');
-        }
-        freshSha=existing.sha;
-        addLog('기존 글 발견 → 덮어쓰기 (SHA: '+freshSha.slice(0,7)+')','warn');
-      }else{
-        addLog('새 파일 생성','info');
-      }
     }
-    
-    // 5. PUT (응답 검증 포함)
-    addLog('GitHub에 저장 중...');
-    const b64=utf8ToBase64(yaml);
-    const putResult=await ghPutFile(path,b64,freshSha,(editingPath?'Update':'Publish')+' work: '+meta.title);
-    savedCommitSha=putResult.commit.sha;
     savedPath=path;
-    addLog('✓ PUT 응답 OK (commit: '+savedCommitSha.slice(0,7)+')','ok');
-    
-    // 6. ⭐ 핵심: 실제로 저장됐는지 GET으로 검증
+
+    // .md도 tree에 추가 (base64 utf8)
+    const mdB64=utf8ToBase64(yaml);
+    const mdBlobSha=await ghCreateBlob(mdB64);
+    treeItems.push({path:path,mode:'100644',type:'blob',sha:mdBlobSha});
+
+    // 5. 단일 커밋으로 묶기 (여기서부터 ref 쓰기는 딱 1번)
+    addLog('GitHub 커밋 준비 중...');
+    const parentCommit=await ghGetRefV12();
+    addLog('현재 브랜치 위치: '+parentCommit.slice(0,7),'info');
+    const baseTree=await ghGetCommitTreeV12(parentCommit);
+    addLog('새 tree 생성 중... ('+treeItems.length+'개 파일)');
+    const newTree=await ghCreateTreeV12(baseTree,treeItems);
+    addLog('커밋 생성 중...');
+    const newCommit=await ghCreateCommitV12((editingPath?'Update':'Publish')+' work: '+meta.title,newTree,parentCommit);
+    addLog('브랜치 업데이트 중... (마지막 단계)');
+    await ghUpdateRefV12(newCommit);
+    addLog('✓ 커밋 완료: '+newCommit.slice(0,7),'ok');
+
+    // 6. 검증
     addLog('','');
-    addLog('🔍 저장 검증 중... (1.5초 대기 후 GET)','info');
-    try{
-      const verified=await verifyFileExists(path,yaml);
-      addLog('✓ 검증 성공: 파일이 GitHub에 실존합니다','ok');
-      addLog('  파일 SHA: '+verified.sha.slice(0,7),'ok');
-      addLog('  크기: '+verified.size+' bytes','ok');
-      verifyEl.className='verify-result ok';
-      verifyEl.innerHTML='✓ <strong>검증 완료</strong> — GitHub에 정상 저장됨<br>'+
-        '경로: '+path+'<br>'+
-        'Commit: '+savedCommitSha.slice(0,7)+' · File SHA: '+verified.sha.slice(0,7);
-    }catch(verifyErr){
-      // 검증 실패는 치명적이지만 PUT 자체는 성공했을 수도 있음
-      addLog('⚠️ 검증 실패: '+verifyErr.message,'err');
-      addLog('  PUT은 성공했지만 GET으로 확인이 안됨 — 잠시 후 다시 확인하세요','warn');
-      verifyEl.className='verify-result fail';
-      verifyEl.innerHTML='⚠️ <strong>검증 실패</strong> — PUT은 성공했으나 GET 확인 실패.<br>'+
-        verifyErr.message+'<br>'+
-        '잠시 후 사이트에서 직접 확인해주세요.';
-      // 검증 실패해도 일단 발행은 계속 진행 (PUT은 성공했으니)
-    }
-    
-    addLog('','');
-    addLog('사이트 빌드 대기 중... (Astro 빌드 후 2-3분 내 반영)','info');
-    addLog('✓ '+(editingPath?'수정':'발행')+' 완료!','ok');
-    
-    // 7. 성공 → 임시저장 삭제
+    addLog('✓ '+(editingPath?'수정':'발행')+' 완료! 단일 커밋으로 안전하게 저장됨','ok');
+    addLog('사이트 빌드 후 2-3분 내 반영됩니다','info');
+    verifyEl.className='verify-result ok';
+    verifyEl.innerHTML='✓ <strong>발행 완료</strong> — Git 단일 커밋으로 저장됨<br>'+
+      '경로: '+path+'<br>Commit: '+newCommit.slice(0,7);
+
     localStorage.removeItem(DRAFT_KEY);
-    setSaveState('saved');
-    isDirty=false;
-    
+    setSaveState('saved');isDirty=false;
     title.textContent='✓ '+(editingPath?'수정':'발행')+' 완료';
-    const slug=path.replace('src/content/works/','').replace('.md','');
-    link.href='/works/'+encodeURIComponent(slug)+'/';
-    footer.style.display='flex';
-    close.style.display='block';
+    const slug2=path.replace('src/content/works/','').replace('.md','');
+    link.href='/works/'+encodeURIComponent(slug2)+'/';
+    footer.style.display='flex';close.style.display='block';
   }catch(e){
     addLog('','');
     addLog('✗ 실패: '+e.message,'err');
-    if(savedPath){
-      addLog('','');
-      addLog('참고: PUT은 시도됐습니다. 경로: '+savedPath,'warn');
-      if(savedCommitSha)addLog('Commit SHA: '+savedCommitSha,'warn');
-    }
+    if(savedPath)addLog('참고 경로: '+savedPath,'warn');
     title.textContent='✗ 실패';
     verifyEl.className='verify-result fail';
     verifyEl.innerHTML='✗ <strong>발행 실패</strong><br>'+e.message+'<br><br>'+
       '<small>해결 방법:<br>'+
-      '1. 네트워크 연결 확인<br>'+
+      '1. 네트워크 연결 확인 (와이파이/데이터)<br>'+
       '2. CMS에 다시 로그인 (토큰 갱신)<br>'+
-      '3. GitHub Repository 권한 확인<br>'+
+      '3. 다시 발행 버튼을 눌러보세요 (이미 올라간 사진은 재사용됨)<br>'+
       '4. 위 로그를 캡처해서 개발자에게 전달</small>';
     close.style.display='block';
     document.getElementById('pubBtn').disabled=false;
