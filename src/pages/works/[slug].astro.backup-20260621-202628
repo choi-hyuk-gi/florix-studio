@@ -18,18 +18,6 @@ const { work } = Astro.props;
 const formattedDate = work.data.date.toLocaleDateString('ko-KR', {
   year: 'numeric', month: 'long', day: 'numeric'
 });
-
-// 텍스트 블록 정렬: **볼드**->strong, 줄바꿈->문단/<br> (HTML이면 그대로)
-function formatBlockContent(raw) {
-  if (!raw) return '';
-  const hasHtml = /<(p|br|div|strong|b|h[1-6]|ul|li|em)\b/i.test(raw);
-  if (hasHtml) return raw; // bulk-write가 만든 정상 HTML은 건드리지 않음
-  // 일반 텍스트: **볼드** 변환
-  let t = raw.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
-  // 빈 줄(\n\n)로 문단 분리, 단일 \n은 <br>
-  const paras = t.split(/\n{2,}/).map(p => p.trim()).filter(Boolean);
-  return paras.map(p => '<p>' + p.replace(/\n/g, '<br>') + '</p>').join('');
-}
 ---
 
 <Layout title={`${work.data.title} | 플로릭스 스튜디오`} description={`${work.data.location} / ${work.data.category} 콘크리트 폴리싱`}>
@@ -99,7 +87,7 @@ function formatBlockContent(raw) {
               </figure>
             ) : (
               <div class="prose-content max-w-none">
-                <Fragment set:html={formatBlockContent(block.content)} />
+                <Fragment set:html={block.content} />
               </div>
             )
           ))}

@@ -1,3 +1,15 @@
+﻿# ==================================================================
+#  증평 글 본문을 HTML로 깨끗하게 재발행 (** 제거, 예쁜 정렬)
+#  사진 14장은 이미 GitHub에 있음 -> 텍스트만 정리해서 .md 덮어쓰기
+# ==================================================================
+$ErrorActionPreference = "Stop"
+Set-Location "C:\Users\USER\florix-studio"
+git pull | Out-Null
+
+$path = "src\content\works\2026-06-16-증평-카페-옥상-시공기.md"
+
+# 본문을 HTML <p>로 작성 (** 없음, 문단 구분 깔끔)
+$md = @'
 ---
 title: "증평 카페 옥상 시공기"
 location: "증평"
@@ -67,3 +79,24 @@ blocks:
   - type: text
     content: "<p>📌 다시 한번 안내드리면, 이번 현장은 <strong>우레탄 제거와 면갈이</strong>까지 진행한 단계예요. 콘크리트 폴리싱(광택 폴리싱)은 들어가지 않았습니다.</p><h2>왜 면갈이가 중요할까요?</h2><p>어떤 마감을 올리든, 결국 바닥이 받쳐주지 않으면 오래가지 못합니다. 도막이 남아 있거나 면이 고르지 않으면 위에 올라가는 폴리싱도, 에폭시도 들뜨거나 갈라지기 쉬워요. 그래서 저희는 이 면갈이 단계를 가장 기본이자 가장 중요한 공정으로 봅니다.</p><p>증평 카페 옥상, 깨끗하게 정리해 드렸습니다. 다음 단계가 필요하시거나 비슷한 공간을 고민 중이시라면 언제든 편하게 문의 주세요 🙂</p><p><strong>플로릭스 스튜디오 | 콘크리트 폴리싱 전문</strong><br>홈페이지 → https://florixstudio.co.kr/<br>블로그 → https://blog.naver.com/florix_studios<br>인스타그램 → https://www.instagram.com/florix_studios<br>010-8930-2266</p>"
 ---
+'@
+
+$enc = [System.Text.UTF8Encoding]::new($false)
+$full = "C:\Users\USER\florix-studio\" + $path
+[System.IO.File]::WriteAllText($full, $md, $enc)
+Write-Host "✅ 증평 글 본문 HTML로 재작성 완료" -ForegroundColor Green
+
+Write-Host "빌드 테스트 중..." -ForegroundColor Cyan
+$build = & npm run build 2>&1 | Out-String
+if($build -match "Complete!"){
+  Write-Host "✅ 빌드 성공" -ForegroundColor Green
+}else{
+  Write-Host "⚠️ 빌드 확인 필요:" -ForegroundColor Yellow
+  Write-Host ($build | Select-Object -Last 15)
+  exit 1
+}
+
+git add -A
+git commit -m "증평 글 본문 정리 + [slug] 렌더링 보강"
+git push
+Write-Host "`n🎉 완료! 2-3분 후 사이트 반영" -ForegroundColor Green
