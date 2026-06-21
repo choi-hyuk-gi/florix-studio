@@ -1130,7 +1130,7 @@ function htmlToMd(html){
   t=t.replace(/<h2[^>]*>([\s\S]*?)<\/h2>/gi,'\n\n# $1\n\n');
   t=t.replace(/<h3[^>]*>([\s\S]*?)<\/h3>/gi,'\n\n## $1\n\n');
   t=t.replace(/<h4[^>]*>([\s\S]*?)<\/h4>/gi,'\n\n### $1\n\n');
-  t=t.replace(/<(strong|b)[^>]*>([\s\S]*?)<\/\1>/gi,'<strong>$2</strong>');
+  t=t.replace(/<(strong|b)[^>]*>([\s\S]*?)<\/\1>/gi,'**$2**');
   t=t.replace(/<(em|i)[^>]*>([\s\S]*?)<\/\1>/gi,'*$2*');
   t=t.replace(/<u[^>]*>([\s\S]*?)<\/u>/gi,'$1');
   t=t.replace(/<br\s*\/?>/gi,'\n');
