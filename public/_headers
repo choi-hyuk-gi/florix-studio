@@ -1,0 +1,5 @@
+# admin ?섏씠吏???덈? 罹먯떆?섏? ?딆쓬 (??긽 理쒖떊)
+/admin/*
+  Cache-Control: no-store, no-cache, must-revalidate, max-age=0
+  Pragma: no-cache
+  Expires: 0

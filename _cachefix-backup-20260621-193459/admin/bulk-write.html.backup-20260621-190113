@@ -1,23 +1,6 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-<!-- CACHE-KILLER v1: ???섏씠吏???덈? 罹먯떆?섎㈃ ????(愿由??섏씠吏) -->
-<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
-<meta http-equiv="Pragma" content="no-cache">
-<meta http-equiv="Expires" content="0">
-<script>
-// 湲곗〈??諛뺥엺 ?쒕퉬?ㅼ썙而??꾨? ?쒓굅 (???뚯씪 罹먯떆 ?먯씤 ?쒓굅)
-if('serviceWorker' in navigator){
-  navigator.serviceWorker.getRegistrations().then(function(rs){
-    for(var i=0;i<rs.length;i++){rs[i].unregister();}
-  });
-}
-// 罹먯떆 ?ㅽ넗由ъ???鍮꾩?
-if(window.caches&&caches.keys){
-  caches.keys().then(function(keys){keys.forEach(function(k){caches.delete(k);});});
-}
-</script>
-<!-- /CACHE-KILLER -->
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
 <title>플로릭스 스튜디오 · 빠른 작성 (v10 안전 발행)</title>
@@ -947,7 +930,7 @@ async function loadWorksList(){
   list.innerHTML='<div style="grid-column:1/-1;text-align:center;padding:40px;color:#999">목록 불러오는 중...</div>';
   try{
     const url='https://api.github.com/repos/'+REPO+'/contents/src/content/works?ref='+BRANCH;
-    const res=await fetchWithRetry(url,{headers:{'Authorization':'Bearer '+TOKEN,'Accept':'application/vnd.github.v3+json'}});
+    const res=await fetch(url,{headers:{'Authorization':'Bearer '+TOKEN,'Accept':'application/vnd.github.v3+json'}});
     if(!res.ok)throw new Error('HTTP '+res.status);
     const files=await res.json();
     const mds=files.filter(f=>f.name.endsWith('.md')&&!f.name.startsWith('.'));
@@ -1144,7 +1127,7 @@ function buildYaml(meta,blockArr,thumb){
 // 모든 응답에 대해 엄격한 검증
 async function ghGetFile(path){
   const url='https://api.github.com/repos/'+REPO+'/contents/'+encodeURIComponent(path).replace(/%2F/g,'/')+'?ref='+BRANCH+'&t='+Date.now(); // 캐시 방지
-  const res=await fetchWithRetry(url,{
+  const res=await fetch(url,{
     headers:{'Authorization':'Bearer '+TOKEN,'Accept':'application/vnd.github.v3+json','Cache-Control':'no-cache'}
   });
   if(res.status===404)return null;
@@ -1163,7 +1146,7 @@ async function ghPutFile(path,content,sha,message){
   const body={message,content,branch:BRANCH};
   if(sha)body.sha=sha;
   
-  const res=await fetchWithRetry(url,{
+  const res=await fetch(url,{
     method:'PUT',
     headers:{
       'Authorization':'Bearer '+TOKEN,
@@ -1221,56 +1204,6 @@ async function verifyFileExists(path,expectedContent){
   return data;
 }
 
-// ===== v11: ?대?吏 ?뺤텞 =====
-function compressImage(file,maxDim,quality){
-  maxDim=maxDim||1600;quality=quality||0.82;
-  return new Promise(function(resolve){
-    if(!file||!file.type||!file.type.startsWith('image/')){resolve(file);return;}
-    var reader=new FileReader();
-    reader.onload=function(e){
-      var img=new Image();
-      img.onload=function(){
-        var width=img.width,height=img.height;
-        var tooBig=file.size>2*1024*1024;
-        if(width<=maxDim&&height<=maxDim&&!tooBig){resolve(file);return;}
-        if(width>height){if(width>maxDim){height=Math.round(height*maxDim/width);width=maxDim;}}
-        else{if(height>maxDim){width=Math.round(width*maxDim/height);height=maxDim;}}
-        var canvas=document.createElement('canvas');
-        canvas.width=width;canvas.height=height;
-        canvas.getContext('2d').drawImage(img,0,0,width,height);
-        canvas.toBlob(function(blob){
-          if(!blob||blob.size>=file.size){resolve(file);return;}
-          var newName=file.name.replace(/\.(png|webp|heic|heif)$/i,'.jpg');
-          resolve(new File([blob],newName,{type:'image/jpeg',lastModified:Date.now()}));
-        },'image/jpeg',quality);
-      };
-      img.onerror=function(){resolve(file);};
-      img.src=e.target.result;
-    };
-    reader.onerror=function(){resolve(file);};
-    reader.readAsDataURL(file);
-  });
-}
-function sleep(ms){return new Promise(function(r){setTimeout(r,ms);});}
-// ===== v11: fetch ?ъ떆??=====
-async function fetchWithRetry(url,options,maxRetries){
-  maxRetries=(maxRetries===undefined)?3:maxRetries;
-  var lastErr=null;
-  for(var attempt=0;attempt<=maxRetries;attempt++){
-    try{
-      var res=await fetch(url,options);
-      if((res.status===403||res.status===429||res.status>=500)&&attempt<maxRetries){
-        await sleep(1000*Math.pow(2,attempt));continue;
-      }
-      return res;
-    }catch(e){
-      lastErr=e;
-      if(attempt<maxRetries){await sleep(1000*Math.pow(2,attempt));continue;}
-      throw lastErr;
-    }
-  }
-  if(lastErr)throw lastErr;
-}
 function fileToBase64(file){
   return new Promise((resolve,reject)=>{
     const r=new FileReader();
@@ -1361,11 +1294,11 @@ async function publish(){
           const sn=safeName(b.filename);
           const remoteName=ts+'_'+i+'_'+sn;
           const remotePath='public/uploads/'+remoteName;
-          const compFile=await compressImage(b.file);const b64=await fileToBase64(compFile);
+          const b64=await fileToBase64(b.file);
           addLog('사진 '+(i+1)+'/'+newImages.length+' 업로드: '+sn);
           const result=await ghPutFile(remotePath,b64,null,'Upload image: '+remoteName);
           b.uploaded=true;b.uploading=false;b.progress=100;
-          b.uploadedPath='/uploads/'+remoteName;await sleep(400);
+          b.uploadedPath='/uploads/'+remoteName;
           b.src=b.uploadedPath;
           renderBlocks();
           addLog('✓ 업로드됨 (commit: '+result.commit.sha.slice(0,7)+')','ok');
@@ -1385,7 +1318,7 @@ async function publish(){
         const sn=safeName(thumbOverride.filename||'thumbnail.jpg');
         const remoteName=ts+'_thumb_'+sn;
         const remotePath='public/uploads/'+remoteName;
-        const compFile=await compressImage(thumbOverride.file);const b64=await fileToBase64(compFile);
+        const b64=await fileToBase64(thumbOverride.file);
         const result=await ghPutFile(remotePath,b64,null,'Upload thumbnail: '+remoteName);
         thumbOverride.uploaded=true;
         thumbOverride.uploadedPath='/uploads/'+remoteName;

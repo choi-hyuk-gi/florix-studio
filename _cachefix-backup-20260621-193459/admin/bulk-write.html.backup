@@ -1,26 +1,9 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-<!-- CACHE-KILLER v1: ???섏씠吏???덈? 罹먯떆?섎㈃ ????(愿由??섏씠吏) -->
-<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
-<meta http-equiv="Pragma" content="no-cache">
-<meta http-equiv="Expires" content="0">
-<script>
-// 湲곗〈??諛뺥엺 ?쒕퉬?ㅼ썙而??꾨? ?쒓굅 (???뚯씪 罹먯떆 ?먯씤 ?쒓굅)
-if('serviceWorker' in navigator){
-  navigator.serviceWorker.getRegistrations().then(function(rs){
-    for(var i=0;i<rs.length;i++){rs[i].unregister();}
-  });
-}
-// 罹먯떆 ?ㅽ넗由ъ???鍮꾩?
-if(window.caches&&caches.keys){
-  caches.keys().then(function(keys){keys.forEach(function(k){caches.delete(k);});});
-}
-</script>
-<!-- /CACHE-KILLER -->
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-<title>플로릭스 스튜디오 · 빠른 작성 (v10 안전 발행)</title>
+<title>플로릭스 스튜디오 · 빠른 작성</title>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/js-yaml@4.1.0/dist/js-yaml.min.js"></script>
 <style>
@@ -71,7 +54,6 @@ body{font-family:'Noto Sans KR',sans-serif;background:#FAFAF8;color:#1A1A1A;min-
 .status.info{background:#E8F0FE;color:#1A56DB}
 .status.success{background:#E8F5E9;color:#2E7D32}
 .status.error{background:#FEE;color:#C62828}
-.status.warning{background:#FFF3CD;color:#856404}
 .add-bar{display:flex;gap:8px;margin-bottom:20px}
 .add-bar button{flex:1}
 .blocks{min-height:80px}
@@ -132,10 +114,6 @@ body{font-family:'Noto Sans KR',sans-serif;background:#FAFAF8;color:#1A1A1A;min-
 .work-card-title{font-size:13px;font-weight:700;line-height:1.4;margin-bottom:4px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
 .work-card-meta{font-size:11px;color:#888}
 .publish-log{font-family:'JetBrains Mono','Consolas',monospace;font-size:12px;background:#1A1A1A;color:#7BAE5C;padding:14px;border-radius:6px;max-height:340px;overflow-y:auto;white-space:pre-wrap;word-break:break-all;line-height:1.55}
-.publish-log .err{color:#FF6B6B}
-.publish-log .warn{color:#FFD93D}
-.publish-log .ok{color:#7BAE5C}
-.publish-log .info{color:#8FB8FF}
 .emoji-grid{display:grid;grid-template-columns:repeat(8,1fr);gap:4px;max-width:300px}
 .emoji-grid button{background:white;border:1px solid #E5E5E0;padding:8px;font-size:18px;cursor:pointer;border-radius:5px;font-family:inherit}
 .emoji-grid button:hover{background:#FFF8F0;border-color:#B8956A}
@@ -172,9 +150,6 @@ body{font-family:'Noto Sans KR',sans-serif;background:#FAFAF8;color:#1A1A1A;min-
 .upload-thumb-zone .icon{font-size:40px;margin-bottom:8px;opacity:.5}
 .upload-thumb-zone p{font-size:13px;color:#666;margin-bottom:4px}
 .upload-thumb-zone .small{font-size:11px;color:#999}
-.verify-result{margin-top:12px;padding:12px;border-radius:6px;font-size:12px;font-family:'JetBrains Mono','Consolas',monospace}
-.verify-result.ok{background:#E8F5E9;color:#2E7D32;border:1px solid #A5D6A7}
-.verify-result.fail{background:#FEE;color:#C62828;border:1px solid #FFCDD2}
 @media (max-width:768px){
   .container{padding:14px;padding-bottom:140px}
   .header{padding:10px 0}
@@ -200,7 +175,7 @@ body{font-family:'Noto Sans KR',sans-serif;background:#FAFAF8;color:#1A1A1A;min-
 <body>
 <div class="container">
   <div class="header">
-    <h1>빠른 작성 · 시공 사례 <span style="font-size:11px;color:#999;font-weight:500">v10 안전 발행</span></h1>
+    <h1>빠른 작성 · 시공 사례</h1>
     <div class="header-actions">
       <div class="save-indicator" id="saveInd"><span class="dot"></span><span class="text">준비됨</span></div>
       <button class="btn btn-edit" id="loadBtn">✏️ 글 불러오기</button>
@@ -217,8 +192,7 @@ body{font-family:'Noto Sans KR',sans-serif;background:#FAFAF8;color:#1A1A1A;min-
 
   <div id="editor" style="display:none">
     <div id="status" class="status"></div>
-    <div id="tokenStatus" class="status"></div>
-
+    
     <div id="draftBanner" class="draft-banner" style="display:none">
       <div class="info">📝 이전에 작성하던 글이 있어요. 이어서 작성할까요?</div>
       <div class="draft-actions">
@@ -354,7 +328,6 @@ body{font-family:'Noto Sans KR',sans-serif;background:#FAFAF8;color:#1A1A1A;min-
     </div>
     <div class="modal-body">
       <div id="pubLog" class="publish-log"></div>
-      <div id="verifyResult"></div>
     </div>
     <div class="modal-footer" id="pubFooter" style="display:none">
       <button class="btn btn-secondary" onclick="closePubModal()">닫기</button>
@@ -377,17 +350,7 @@ body{font-family:'Noto Sans KR',sans-serif;background:#FAFAF8;color:#1A1A1A;min-
 </div>
 
 <script>
-// ============================================================
-// v10 안전 발행 — 핵심 개선사항
-// ============================================================
-// 1. 토큰 권한 사전 체크 (write 권한 확인)
-// 2. PUT 응답의 commit SHA 검증
-// 3. GET으로 저장 확인 (round-trip verification)
-// 4. 모든 에러를 묵음 처리 없이 즉시 표시
-// 5. editingSha 상태 누락 방지 (매번 fresh fetch)
-// 6. "발행 완료"는 검증 후에만 표시
-// ============================================================
-
+// ========== 상수 ==========
 const REPO='choi-hyuk-gi/florix-studio';
 const BRANCH='main';
 const DRAFT_KEY='florix-bulk-write-draft-v1';
@@ -414,7 +377,6 @@ function getToken(){
   return null;
 }
 const TOKEN=getToken();
-let TOKEN_VERIFIED=false; // 토큰 write 권한 확인 여부
 
 if(!TOKEN){
   document.getElementById('loginGate').style.display='block';
@@ -425,50 +387,16 @@ if(!TOKEN){
   document.getElementById('pubBtn').disabled=false;
   document.getElementById('pubBtn2').disabled=false;
   document.getElementById('date').value=new Date().toISOString().split('T')[0];
-  // 페이지 로드 시 토큰 권한 사전 확인
-  verifyTokenPermissions();
-}
-
-// ========== 토큰 권한 사전 확인 ==========
-async function verifyTokenPermissions(){
-  const el=document.getElementById('tokenStatus');
-  el.className='status show info';
-  el.textContent='🔐 GitHub 권한 확인 중...';
-  try{
-    // 1. 레포 접근 가능한지 확인
-    const repoUrl='https://api.github.com/repos/'+REPO;
-    const repoRes=await fetch(repoUrl,{headers:{'Authorization':'Bearer '+TOKEN,'Accept':'application/vnd.github.v3+json'}});
-    if(!repoRes.ok){
-      throw new Error('레포 접근 실패 (HTTP '+repoRes.status+'). 토큰이 만료되었거나 권한이 없습니다.');
-    }
-    const repoData=await repoRes.json();
-    // 2. push 권한이 있는지 확인 (permissions 필드)
-    const perms=repoData.permissions||{};
-    if(!perms.push&&!perms.admin&&!perms.maintain){
-      throw new Error('이 토큰은 쓰기(push) 권한이 없습니다. CMS에 다시 로그인하거나 토큰 권한을 확인하세요.');
-    }
-    TOKEN_VERIFIED=true;
-    el.className='status show success';
-    el.innerHTML='✓ GitHub 쓰기 권한 확인됨 ('+REPO+', '+BRANCH+' 브랜치)';
-    setTimeout(()=>{el.className='status'},4000);
-  }catch(e){
-    TOKEN_VERIFIED=false;
-    el.className='status show error';
-    el.innerHTML='⚠️ <strong>발행이 작동하지 않을 수 있습니다.</strong><br>'+e.message+'<br><a href="/admin/" style="color:#1A56DB;text-decoration:underline">CMS에 다시 로그인하기</a>';
-    // 발행 버튼 비활성화
-    document.getElementById('pubBtn').disabled=true;
-    document.getElementById('pubBtn2').disabled=true;
-  }
 }
 
 // ========== 상태 ==========
 let blocks=[];
 let blockIdCounter=0;
-let editingPath=null;
-let editingSha=null;
+let editingPath=null;  // 수정 모드: 글 경로
+let editingSha=null;   // 수정 모드: 파일 SHA
 let isDirty=false;
 let saveTimer=null;
-let thumbOverride=null;
+let thumbOverride=null; // {dataUrl, file, src, filename, uploaded, uploadedPath} - 본문 외 대표 사진
 
 function nextId(){return 'b'+(++blockIdCounter)}
 
@@ -506,6 +434,7 @@ function saveDraft(){
       blocks:blocks.map(b=>{
         if(b.type==='text')return{type:'text',content:b.content};
         if(b.type==='image'){
+          // 기존 이미지는 src만, 새 이미지는 dataUrl까지 시도
           const obj={type:'image',src:b.src||null,filename:b.filename,caption:b.caption,uploaded:b.uploaded,existing:!!b.existing,isThumbnail:b.isThumbnail,uploadedPath:b.uploadedPath||null};
           if(!b.existing&&b.dataUrl&&b.dataUrl.length<2000000)obj.dataUrl=b.dataUrl;
           return obj;
@@ -523,9 +452,11 @@ function saveDraft(){
       savedAt:Date.now()
     };
     const json=JSON.stringify(draft);
+    // 5MB 한도 체크
     if(json.length<4900000){
       localStorage.setItem(DRAFT_KEY,json);
     }else{
+      // 너무 크면 dataUrl 제거하고 저장
       draft.blocks.forEach(b=>{if(b.type==='image')delete b.dataUrl});
       localStorage.setItem(DRAFT_KEY,JSON.stringify(draft));
     }
@@ -569,7 +500,7 @@ function setMeta(m){
   if(el)el.addEventListener('change',markDirty);
 });
 
-// ========== 드래프트 ==========
+// ========== 드래프트 복원 ==========
 function checkDraft(){
   if(!TOKEN)return;
   try{
@@ -586,7 +517,8 @@ function restoreDraft(){
   try{
     const d=JSON.parse(localStorage.getItem(DRAFT_KEY));
     setMeta(d.meta);
-    blocks=[];blockIdCounter=0;
+    blocks=[];
+    blockIdCounter=0;
     for(const b of d.blocks){
       if(b.type==='text'){
         blocks.push({id:nextId(),type:'text',content:b.content||''});
@@ -595,9 +527,11 @@ function restoreDraft(){
           id:nextId(),type:'image',
           src:b.src,filename:b.filename,caption:b.caption||'',
           dataUrl:b.dataUrl||b.src,
-          uploaded:!!b.uploaded,existing:!!b.existing,
+          uploaded:!!b.uploaded,
+          existing:!!b.existing,
           uploadedPath:b.uploadedPath||null,
-          isThumbnail:!!b.isThumbnail,file:null
+          isThumbnail:!!b.isThumbnail,
+          file:null
         });
       }
     }
@@ -606,9 +540,12 @@ function restoreDraft(){
     thumbOverride=null;
     if(d.thumbOverride){
       thumbOverride={
-        filename:d.thumbOverride.filename,src:d.thumbOverride.src,
-        uploaded:!!d.thumbOverride.uploaded,uploadedPath:d.thumbOverride.uploadedPath,
-        dataUrl:d.thumbOverride.dataUrl||d.thumbOverride.src,file:null
+        filename:d.thumbOverride.filename,
+        src:d.thumbOverride.src,
+        uploaded:!!d.thumbOverride.uploaded,
+        uploadedPath:d.thumbOverride.uploadedPath,
+        dataUrl:d.thumbOverride.dataUrl||d.thumbOverride.src,
+        file:null
       };
     }
     if(editingPath){
@@ -616,14 +553,18 @@ function restoreDraft(){
       document.getElementById('editingTitle').textContent=d.meta.title||'(제목 없음)';
     }
     document.getElementById('draftBanner').style.display='none';
-    renderBlocks();updateSummary();setSaveState('saved');
+    renderBlocks();
+    updateSummary();
+    setSaveState('saved');
     const imgWithoutData=blocks.filter(b=>b.type==='image'&&!b.existing&&!b.dataUrl).length;
     if(imgWithoutData>0){
       showStatus('error','⚠️ '+imgWithoutData+'장의 새 사진이 복원되지 않았습니다. 해당 사진은 다시 첨부해주세요.');
     }else{
       showStatus('success','✅ 작성하던 글을 복원했습니다');
     }
-  }catch(e){showStatus('error','복원 실패: '+e.message)}
+  }catch(e){
+    showStatus('error','복원 실패: '+e.message);
+  }
 }
 
 function discardDraft(){
@@ -643,7 +584,9 @@ function updateSummary(){
 function addTextBlock(content='',scroll=true){
   const id=nextId();
   blocks.push({id,type:'text',content});
-  renderBlocks();updateSummary();markDirty();
+  renderBlocks();
+  updateSummary();
+  markDirty();
   setTimeout(()=>{
     const el=document.querySelector('#'+id+' .text-content');
     if(el){el.focus();if(scroll)el.scrollIntoView({behavior:'smooth',block:'center'})}
@@ -658,9 +601,12 @@ function addImageBlock(file){
     blocks.push({
       id,type:'image',file,filename:file.name,
       dataUrl:e.target.result,caption:'',
-      uploaded:false,existing:false,isThumbnail:isFirstImage
+      uploaded:false,existing:false,
+      isThumbnail:isFirstImage
     });
-    renderBlocks();updateSummary();markDirty();
+    renderBlocks();
+    updateSummary();
+    markDirty();
   };
   reader.readAsDataURL(file);
 }
@@ -668,7 +614,9 @@ function addImageBlock(file){
 function deleteBlock(id){
   if(!confirm('이 블록을 삭제할까요?'))return;
   blocks=blocks.filter(b=>b.id!==id);
-  renderBlocks();updateSummary();markDirty();
+  renderBlocks();
+  updateSummary();
+  markDirty();
 }
 
 function moveBlock(id,dir){
@@ -676,13 +624,16 @@ function moveBlock(id,dir){
   const j=i+dir;
   if(j<0||j>=blocks.length)return;
   [blocks[i],blocks[j]]=[blocks[j],blocks[i]];
-  renderBlocks();markDirty();
+  renderBlocks();
+  markDirty();
 }
 
 function setThumbnail(id){
   blocks.forEach(b=>{if(b.type==='image')b.isThumbnail=(b.id===id)});
-  thumbOverride=null;
-  renderBlocks();updateThumbPreview();markDirty();
+  thumbOverride=null; // 본문 사진을 대표로 → 별도 업로드 해제
+  renderBlocks();
+  updateThumbPreview();
+  markDirty();
   showStatus('success','대표 사진이 변경되었습니다');
 }
 
@@ -696,8 +647,9 @@ function updateTextContent(id,html){
   if(b){b.content=html;markDirty()}
 }
 
-// ========== 대표 사진 ==========
+// ========== 대표 사진 (메타 영역) ==========
 function getThumbSource(){
+  // 우선순위: 1) 별도 업로드된 thumbOverride, 2) blocks 중 isThumbnail, 3) 첫 사진
   if(thumbOverride)return{src:thumbOverride.dataUrl||thumbOverride.src,label:thumbOverride.filename||'대표 사진(별도)',override:true};
   const starred=blocks.find(b=>b.type==='image'&&b.isThumbnail);
   if(starred)return{src:starred.dataUrl||starred.src,label:starred.filename||'본문 사진',override:false};
@@ -762,15 +714,20 @@ function renderThumbOptions(imgs){
   }).join('');
 }
 
-function pickFromBlocks(id){setThumbnail(id);closeThumbModal()}
+function pickFromBlocks(id){
+  setThumbnail(id);
+  closeThumbModal();
+}
 
 function clearThumbOverride(){
   if(!confirm('업로드한 대표 사진을 삭제할까요?'))return;
   thumbOverride=null;
-  updateThumbPreview();markDirty();
+  updateThumbPreview();
+  markDirty();
   showStatus('info','대표 사진이 제거되었습니다 (첫 본문 사진이 자동 사용됨)');
 }
 
+// 별도 사진 업로드 (대표 사진 전용)
 function setupThumbUpload(){
   const zone=document.getElementById('thumbUploadZone');
   const inp=document.getElementById('thumbFileInput');
@@ -795,11 +752,16 @@ function handleThumbFile(file){
   const r=new FileReader();
   r.onload=e=>{
     thumbOverride={
-      file,filename:file.name,dataUrl:e.target.result,
+      file,filename:file.name,
+      dataUrl:e.target.result,
       src:null,uploaded:false,uploadedPath:null
     };
+    // 본문 사진의 isThumbnail은 모두 해제
     blocks.forEach(b=>{if(b.type==='image')b.isThumbnail=false});
-    renderBlocks();updateThumbPreview();closeThumbModal();markDirty();
+    renderBlocks();
+    updateThumbPreview();
+    closeThumbModal();
+    markDirty();
     showStatus('success','대표 사진이 설정되었습니다');
   };
   r.readAsDataURL(file);
@@ -809,7 +771,8 @@ function renderBlocks(){
   const a=document.getElementById('blocks');
   if(blocks.length===0){
     a.innerHTML='<div class="empty">오른쪽 아래 <kbd>＋</kbd> 버튼 또는 위 영역에서 시작하세요.<br><span style="font-size:11px;color:#BBB;display:inline-block;margin-top:8px">단축키: <kbd>Ctrl+Shift+T</kbd> 텍스트 · <kbd>Ctrl+Shift+I</kbd> 사진 · <kbd>Ctrl+S</kbd> 저장</span></div>';
-    updateThumbPreview();return;
+    updateThumbPreview();
+    return;
   }
   a.innerHTML=blocks.map((b,i)=>renderBlock(b,i)).join('');
   blocks.forEach(b=>{
@@ -932,14 +895,15 @@ document.addEventListener('keydown',e=>{
   else if(e.ctrlKey&&(e.key==='s'||e.key==='S')){e.preventDefault();saveDraft();showStatus('success','저장됨')}
 });
 
-// ========== 글 불러오기 ==========
+// ========== 글 불러오기 (수정 모드) ==========
 document.getElementById('loadBtn').addEventListener('click',openLoadModal);
 
 async function openLoadModal(){
-  if(blocks.length>0&&!confirm('현재 작성 중인 내용이 있어요. 글을 불러오면 사라집니다. 계속할까요?'))return;
+  if(blocks.length>0&&!confirm('현재 작성 중인 내용이 있어요. 글을 불러오면 사라집니다. 계속할까요?\n\n(취소를 누르면 먼저 발행하거나 저장하세요)'))return;
   document.getElementById('loadModal').classList.add('show');
   await loadWorksList();
 }
+
 function closeLoadModal(){document.getElementById('loadModal').classList.remove('show')}
 
 async function loadWorksList(){
@@ -947,13 +911,15 @@ async function loadWorksList(){
   list.innerHTML='<div style="grid-column:1/-1;text-align:center;padding:40px;color:#999">목록 불러오는 중...</div>';
   try{
     const url='https://api.github.com/repos/'+REPO+'/contents/src/content/works?ref='+BRANCH;
-    const res=await fetchWithRetry(url,{headers:{'Authorization':'Bearer '+TOKEN,'Accept':'application/vnd.github.v3+json'}});
+    const res=await fetch(url,{headers:{'Authorization':'Bearer '+TOKEN,'Accept':'application/vnd.github.v3+json'}});
     if(!res.ok)throw new Error('HTTP '+res.status);
     const files=await res.json();
     const mds=files.filter(f=>f.name.endsWith('.md')&&!f.name.startsWith('.'));
     if(mds.length===0){
-      list.innerHTML='<div style="grid-column:1/-1;text-align:center;padding:40px;color:#999">발행된 글이 없습니다</div>';return;
+      list.innerHTML='<div style="grid-column:1/-1;text-align:center;padding:40px;color:#999">발행된 글이 없습니다</div>';
+      return;
     }
+    // 각 글의 메타 가져오기 (병렬)
     const works=await Promise.all(mds.map(async f=>{
       try{
         const r=await fetch(f.url,{headers:{'Authorization':'Bearer '+TOKEN,'Accept':'application/vnd.github.v3+json'}});
@@ -965,6 +931,7 @@ async function loadWorksList(){
         return{file:f,sha:d.sha,meta,content,path:f.path};
       }catch(e){return{file:f,error:e.message}}
     }));
+    // 날짜 역순 정렬
     works.sort((a,b)=>{
       const da=a.meta?.date?new Date(a.meta.date).getTime():0;
       const db=b.meta?.date?new Date(b.meta.date).getTime():0;
@@ -985,6 +952,7 @@ async function loadWorksList(){
         '</div>'+
       '</div>';
     }).join('');
+    // 데이터 캐시
     window._worksCache={};
     works.forEach(w=>{if(!w.error)window._worksCache[w.path]=w});
   }catch(e){
@@ -1002,10 +970,13 @@ async function selectWork(path){
   try{
     loadIntoEditor(w);
     showStatus('success','✏️ "'+(w.meta.title||'글')+'" 불러옴. 수정 후 발행 누르면 덮어쓰기 됩니다.');
-  }catch(e){showStatus('error','불러오기 실패: '+e.message)}
+  }catch(e){
+    showStatus('error','불러오기 실패: '+e.message);
+  }
 }
 
 function loadIntoEditor(w){
+  // 메타 채우기
   const m=w.meta;
   document.getElementById('title').value=m.title||'';
   document.getElementById('location').value=m.location||'';
@@ -1020,7 +991,10 @@ function loadIntoEditor(w){
   document.getElementById('duration').value=m.duration||'1일 완공';
   document.getElementById('specs').value=m.specs||'';
   
-  blocks=[];blockIdCounter=0;thumbOverride=null;
+  // 블록 복원
+  blocks=[];
+  blockIdCounter=0;
+  thumbOverride=null;
   const thumb=m.thumbnail;
   let thumbMatched=false;
   if(Array.isArray(m.blocks)){
@@ -1032,51 +1006,76 @@ function loadIntoEditor(w){
         const isThumb=thumb===b.src;
         if(isThumb)thumbMatched=true;
         blocks.push({
-          id:nextId(),type:'image',src:b.src,dataUrl:b.src,
+          id:nextId(),type:'image',
+          src:b.src,dataUrl:b.src,
           filename,caption:b.caption||'',
-          uploaded:true,existing:true,uploadedPath:b.src,
-          isThumbnail:isThumb,file:null
+          uploaded:true,existing:true,
+          uploadedPath:b.src,
+          isThumbnail:isThumb,
+          file:null
         });
       }
     }
   }
+  // thumbnail이 본문 사진과 매칭 안 되면 (별도 업로드된 대표 사진) → thumbOverride
   if(thumb&&!thumbMatched){
     thumbOverride={
       filename:thumb.split('/').pop()||'대표 사진',
-      src:thumb,uploaded:true,uploadedPath:thumb,dataUrl:thumb,file:null
+      src:thumb,
+      uploaded:true,
+      uploadedPath:thumb,
+      dataUrl:thumb,
+      file:null
     };
   }
+  // 수정 모드 활성화
   editingPath=w.path;
   editingSha=w.sha;
   document.getElementById('editingBanner').style.display='flex';
   document.getElementById('editingTitle').textContent=m.title||'(제목 없음)';
-  renderBlocks();updateSummary();updateThumbPreview();markDirty();
+  renderBlocks();
+  updateSummary();
+  updateThumbPreview();
+  markDirty();
 }
 
 function cancelEditing(){
-  if(!confirm('수정 모드를 취소할까요?'))return;
-  editingPath=null;editingSha=null;thumbOverride=null;
-  blocks=[];blockIdCounter=0;
+  if(!confirm('수정 모드를 취소할까요? 새 글 작성 모드로 돌아갑니다.\n현재 작성 중인 내용은 사라집니다.'))return;
+  editingPath=null;
+  editingSha=null;
+  thumbOverride=null;
+  blocks=[];
+  blockIdCounter=0;
   document.getElementById('editingBanner').style.display='none';
   setMeta({date:new Date().toISOString().split('T')[0],duration:'1일 완공'});
-  renderBlocks();updateSummary();updateThumbPreview();
+  renderBlocks();
+  updateSummary();
+  updateThumbPreview();
   showStatus('info','새 글 작성 모드로 전환했습니다');
 }
 
 // ========== 마크다운/HTML 변환 ==========
 function mdToHtml(md){
   if(!md)return '';
+  // HTML 태그가 이미 있으면 (span 등) 일부 그대로 두기
   let h=md;
+  // 백슬래시 이스케이프 풀기
   h=h.replace(/\\\*/g,'\u0001').replace(/\\_/g,'\u0002');
+  // 굵게 **text**
   h=h.replace(/\*\*([^*\n]+?)\*\*/g,'<strong>$1</strong>');
+  // 기울임 *text*
   h=h.replace(/(^|[^*])\*([^*\n]+?)\*(?!\*)/g,'$1<em>$2</em>');
+  // 제목
   h=h.replace(/^### (.+)$/gm,'<h4>$1</h4>');
   h=h.replace(/^## (.+)$/gm,'<h3>$1</h3>');
   h=h.replace(/^# (.+)$/gm,'<h2>$1</h2>');
+  // 이스케이프 복원
   h=h.replace(/\u0001/g,'*').replace(/\u0002/g,'_');
+  // 단락
   const parts=h.split(/\n\s*\n/);
   return parts.map(p=>{
-    p=p.trim();if(!p)return '';
+    p=p.trim();
+    if(!p)return '';
     if(/^<(h[1-6]|ul|ol|li|blockquote)/i.test(p))return p;
     return '<p>'+p.replace(/\n/g,'<br>')+'</p>';
   }).filter(Boolean).join('');
@@ -1085,28 +1084,41 @@ function mdToHtml(md){
 function htmlToMd(html){
   if(!html)return '';
   let t=html;
+  // div를 <p>로 정규화
   t=t.replace(/<div[^>]*>/gi,'<p>').replace(/<\/div>/gi,'</p>');
+  // 제목
   t=t.replace(/<h2[^>]*>([\s\S]*?)<\/h2>/gi,'\n\n# $1\n\n');
   t=t.replace(/<h3[^>]*>([\s\S]*?)<\/h3>/gi,'\n\n## $1\n\n');
   t=t.replace(/<h4[^>]*>([\s\S]*?)<\/h4>/gi,'\n\n### $1\n\n');
+  // 굵게/기울임/밑줄
   t=t.replace(/<(strong|b)[^>]*>([\s\S]*?)<\/\1>/gi,'**$2**');
   t=t.replace(/<(em|i)[^>]*>([\s\S]*?)<\/\1>/gi,'*$2*');
-  t=t.replace(/<u[^>]*>([\s\S]*?)<\/u>/gi,'$1');
+  t=t.replace(/<u[^>]*>([\s\S]*?)<\/u>/gi,'$1');  // 마크다운엔 밑줄 없음, 그대로
+  // 줄바꿈
   t=t.replace(/<br\s*\/?>/gi,'\n');
+  // 단락
   t=t.replace(/<p[^>]*>/gi,'').replace(/<\/p>/gi,'\n\n');
+  // 폰트 태그 → span으로 변환 (이미 했어도 안전)
   t=t.replace(/<font([^>]*color\s*=\s*["']?([^"'\s>]+)["']?[^>]*)>([\s\S]*?)<\/font>/gi,'<span style="color:$2">$3</span>');
+  // 빈 span/태그 제거
   t=t.replace(/<span[^>]*>(\s*)<\/span>/gi,'$1');
+  // HTML entity 변환
   const tx=document.createElement('div');
   tx.innerHTML=t;
   let result=tx.innerHTML;
+  // span style만 보존하고 나머지 화이트리스트
+  // 일단 안전한 태그만 남김: strong, em, span(color)
+  // (이미 위에서 다 처리했으므로 패스)
+  // 정리
   result=result.replace(/\n{3,}/g,'\n\n').trim();
   return result;
 }
 
-// ========== YAML ==========
+// ========== YAML 안전 빌더 (v6) ==========
 function yamlString(s){
   if(s===null||s===undefined)return '""';
   s=String(s);
+  // 모든 문자열을 큰따옴표로 감싸고 이스케이프
   return '"'+s.replace(/\\/g,'\\\\').replace(/"/g,'\\"').replace(/\n/g,'\\n').replace(/\r/g,'\\r').replace(/\t/g,'\\t')+'"';
 }
 
@@ -1137,140 +1149,31 @@ function buildYaml(meta,blockArr,thumb){
   return y;
 }
 
-// ============================================================
-// GitHub API — v10 강화 버전
-// ============================================================
-
-// 모든 응답에 대해 엄격한 검증
+// ========== GitHub API ==========
 async function ghGetFile(path){
-  const url='https://api.github.com/repos/'+REPO+'/contents/'+encodeURIComponent(path).replace(/%2F/g,'/')+'?ref='+BRANCH+'&t='+Date.now(); // 캐시 방지
-  const res=await fetchWithRetry(url,{
-    headers:{'Authorization':'Bearer '+TOKEN,'Accept':'application/vnd.github.v3+json','Cache-Control':'no-cache'}
-  });
+  const url='https://api.github.com/repos/'+REPO+'/contents/'+encodeURIComponent(path).replace(/%2F/g,'/')+'?ref='+BRANCH;
+  const res=await fetch(url,{headers:{'Authorization':'Bearer '+TOKEN,'Accept':'application/vnd.github.v3+json'}});
   if(res.status===404)return null;
-  if(!res.ok){
-    const txt=await res.text();
-    throw new Error('GET 실패 ['+res.status+']: '+txt.slice(0,300));
-  }
-  const data=await res.json();
-  if(!data||!data.sha)throw new Error('GET 응답이 비정상입니다 (sha 누락)');
-  return data;
+  if(!res.ok)throw new Error('GET 실패: '+res.status);
+  return await res.json();
 }
 
-// PUT 후 응답 검증 강화
 async function ghPutFile(path,content,sha,message){
   const url='https://api.github.com/repos/'+REPO+'/contents/'+encodeURIComponent(path).replace(/%2F/g,'/');
   const body={message,content,branch:BRANCH};
   if(sha)body.sha=sha;
-  
-  const res=await fetchWithRetry(url,{
+  const res=await fetch(url,{
     method:'PUT',
-    headers:{
-      'Authorization':'Bearer '+TOKEN,
-      'Accept':'application/vnd.github.v3+json',
-      'Content-Type':'application/json'
-    },
+    headers:{'Authorization':'Bearer '+TOKEN,'Accept':'application/vnd.github.v3+json','Content-Type':'application/json'},
     body:JSON.stringify(body)
   });
-  
-  const responseText=await res.text();
-  
   if(!res.ok){
-    let detail=responseText.slice(0,500);
-    try{
-      const j=JSON.parse(responseText);
-      if(j.message)detail=j.message;
-      if(j.errors)detail+=' / '+JSON.stringify(j.errors);
-    }catch(e){}
-    throw new Error('PUT 실패 ['+res.status+'] '+detail);
+    const txt=await res.text();
+    throw new Error('PUT 실패 '+res.status+': '+txt.slice(0,200));
   }
-  
-  let result;
-  try{result=JSON.parse(responseText)}
-  catch(e){throw new Error('PUT 응답 파싱 실패: '+responseText.slice(0,200))}
-  
-  // 응답 검증: commit SHA가 있어야 진짜 저장된 것
-  if(!result.commit||!result.commit.sha){
-    throw new Error('PUT 응답에 commit 정보 없음 — 저장이 실패했을 수 있습니다. 응답: '+responseText.slice(0,300));
-  }
-  if(!result.content||!result.content.sha){
-    throw new Error('PUT 응답에 파일 정보 없음 — 저장이 실패했을 수 있습니다.');
-  }
-  
-  return result;
+  return await res.json();
 }
 
-// 저장 후 실제로 파일이 존재하는지 GET으로 재확인
-async function verifyFileExists(path,expectedContent){
-  // GitHub Contents API는 약간의 지연이 있을 수 있어 짧게 대기
-  await new Promise(r=>setTimeout(r,1500));
-  const data=await ghGetFile(path);
-  if(!data)throw new Error('검증 실패: 파일이 GitHub에 존재하지 않습니다');
-  // base64 디코드해서 내용 비교 (앞부분만)
-  try{
-    const decoded=new TextDecoder('utf-8').decode(
-      Uint8Array.from(atob(data.content.replace(/\s/g,'')),c=>c.charCodeAt(0))
-    );
-    if(expectedContent&&decoded.slice(0,200)!==expectedContent.slice(0,200)){
-      throw new Error('검증 실패: 저장된 내용이 보낸 내용과 다릅니다');
-    }
-  }catch(e){
-    if(e.message.startsWith('검증 실패'))throw e;
-    // 디코드 실패는 무시 (파일 존재만 확인되면 OK)
-  }
-  return data;
-}
-
-// ===== v11: ?대?吏 ?뺤텞 =====
-function compressImage(file,maxDim,quality){
-  maxDim=maxDim||1600;quality=quality||0.82;
-  return new Promise(function(resolve){
-    if(!file||!file.type||!file.type.startsWith('image/')){resolve(file);return;}
-    var reader=new FileReader();
-    reader.onload=function(e){
-      var img=new Image();
-      img.onload=function(){
-        var width=img.width,height=img.height;
-        var tooBig=file.size>2*1024*1024;
-        if(width<=maxDim&&height<=maxDim&&!tooBig){resolve(file);return;}
-        if(width>height){if(width>maxDim){height=Math.round(height*maxDim/width);width=maxDim;}}
-        else{if(height>maxDim){width=Math.round(width*maxDim/height);height=maxDim;}}
-        var canvas=document.createElement('canvas');
-        canvas.width=width;canvas.height=height;
-        canvas.getContext('2d').drawImage(img,0,0,width,height);
-        canvas.toBlob(function(blob){
-          if(!blob||blob.size>=file.size){resolve(file);return;}
-          var newName=file.name.replace(/\.(png|webp|heic|heif)$/i,'.jpg');
-          resolve(new File([blob],newName,{type:'image/jpeg',lastModified:Date.now()}));
-        },'image/jpeg',quality);
-      };
-      img.onerror=function(){resolve(file);};
-      img.src=e.target.result;
-    };
-    reader.onerror=function(){resolve(file);};
-    reader.readAsDataURL(file);
-  });
-}
-function sleep(ms){return new Promise(function(r){setTimeout(r,ms);});}
-// ===== v11: fetch ?ъ떆??=====
-async function fetchWithRetry(url,options,maxRetries){
-  maxRetries=(maxRetries===undefined)?3:maxRetries;
-  var lastErr=null;
-  for(var attempt=0;attempt<=maxRetries;attempt++){
-    try{
-      var res=await fetch(url,options);
-      if((res.status===403||res.status===429||res.status>=500)&&attempt<maxRetries){
-        await sleep(1000*Math.pow(2,attempt));continue;
-      }
-      return res;
-    }catch(e){
-      lastErr=e;
-      if(attempt<maxRetries){await sleep(1000*Math.pow(2,attempt));continue;}
-      throw lastErr;
-    }
-  }
-  if(lastErr)throw lastErr;
-}
 function fileToBase64(file){
   return new Promise((resolve,reject)=>{
     const r=new FileReader();
@@ -1280,36 +1183,34 @@ function fileToBase64(file){
   });
 }
 
+function dataUrlToBase64(d){const i=d.indexOf(',');return d.slice(i+1)}
+
 function utf8ToBase64(str){
   const bytes=new TextEncoder().encode(str);
   let bin='';for(const b of bytes)bin+=String.fromCharCode(b);
   return btoa(bin);
 }
 
-function safeName(name){return name.replace(/[^\w.\-가-힣ㄱ-ㅎㅏ-ㅣ]/g,'_')}
-
-function slugify(s){
-  return String(s||'').toLowerCase()
-    .replace(/[^\w가-힣ㄱ-ㅎㅏ-ㅣ\s-]/g,'').trim()
-    .replace(/\s+/g,'-').slice(0,80);
+function safeName(name){
+  return name.replace(/[^\w.\-가-힣ㄱ-ㅎㅏ-ㅣ]/g,'_');
 }
 
-// ============================================================
-// 발행 — v10 안전 버전
-// ============================================================
+function slugify(s){
+  return String(s||'')
+    .toLowerCase()
+    .replace(/[^\w가-힣ㄱ-ㅎㅏ-ㅣ\s-]/g,'')
+    .trim()
+    .replace(/\s+/g,'-')
+    .slice(0,80);
+}
+
+// ========== 발행 ==========
 document.getElementById('pubBtn').addEventListener('click',publish);
 document.getElementById('pubBtn2').addEventListener('click',publish);
 
 let publishing=false;
 async function publish(){
   if(publishing)return;
-  
-  // 토큰 권한 사전 체크
-  if(!TOKEN_VERIFIED){
-    showStatus('error','⚠️ GitHub 쓰기 권한이 확인되지 않았습니다. 페이지를 새로고침하거나 CMS에 다시 로그인하세요.');
-    return;
-  }
-  
   const meta=getMeta();
   if(!meta.title.trim())return showStatus('error','제목을 입력해주세요');
   if(!meta.location.trim())return showStatus('error','지역을 입력해주세요');
@@ -1326,58 +1227,50 @@ async function publish(){
   const footer=document.getElementById('pubFooter');
   const close=document.getElementById('pubClose');
   const link=document.getElementById('pubLink');
-  const verifyEl=document.getElementById('verifyResult');
-  log.innerHTML='';
-  verifyEl.innerHTML='';
+  log.textContent='';
   title.textContent=editingPath?'수정 중...':'발행 중...';
   footer.style.display='none';
   close.style.display='none';
   modal.classList.add('show');
   
-  const addLog=(t,cls)=>{
-    const ts=new Date().toLocaleTimeString();
-    const line=document.createElement('div');
-    if(cls)line.className=cls;
-    line.textContent='['+ts+'] '+t;
-    log.appendChild(line);
-    log.scrollTop=log.scrollHeight;
-  };
-  
-  let savedPath=null;
-  let savedCommitSha=null;
+  const addLog=t=>{const ts=new Date().toLocaleTimeString();log.textContent+='['+ts+'] '+t+'\n';log.scrollTop=log.scrollHeight};
   
   try{
-    addLog((editingPath?'수정':'발행')+' 시작: '+meta.title,'info');
+    addLog(editingPath?'수정 시작: '+meta.title:'발행 시작: '+meta.title);
     
-    // 1. 새 이미지 업로드
+    // 1. 새 이미지만 업로드
     const newImages=blocks.filter(b=>b.type==='image'&&!b.existing&&!b.uploaded&&b.file);
     if(newImages.length>0){
       addLog('새 사진 '+newImages.length+'장 업로드 시작...');
       for(let i=0;i<newImages.length;i++){
         const b=newImages[i];
-        b.uploading=true;b.progress=0;renderBlocks();
+        b.uploading=true;b.progress=0;
+        renderBlocks();
         try{
           const ts=Date.now();
           const sn=safeName(b.filename);
           const remoteName=ts+'_'+i+'_'+sn;
           const remotePath='public/uploads/'+remoteName;
-          const compFile=await compressImage(b.file);const b64=await fileToBase64(compFile);
+          const b64=await fileToBase64(b.file);
           addLog('사진 '+(i+1)+'/'+newImages.length+' 업로드: '+sn);
-          const result=await ghPutFile(remotePath,b64,null,'Upload image: '+remoteName);
-          b.uploaded=true;b.uploading=false;b.progress=100;
-          b.uploadedPath='/uploads/'+remoteName;await sleep(400);
+          await ghPutFile(remotePath,b64,null,'Upload image: '+remoteName);
+          b.uploaded=true;
+          b.uploading=false;
+          b.progress=100;
+          b.uploadedPath='/uploads/'+remoteName;
           b.src=b.uploadedPath;
           renderBlocks();
-          addLog('✓ 업로드됨 (commit: '+result.commit.sha.slice(0,7)+')','ok');
+          addLog('✓ '+remoteName);
         }catch(e){
-          b.uploading=false;renderBlocks();
-          throw new Error('사진 업로드 실패 ['+b.filename+']: '+e.message);
+          b.uploading=false;
+          renderBlocks();
+          throw new Error('사진 업로드 실패: '+e.message);
         }
       }
-      addLog('모든 사진 업로드 완료','ok');
+      addLog('모든 사진 업로드 완료');
     }
     
-    // 1-B. 별도 대표 사진 업로드
+    // 1-B. 별도 대표 사진 업로드 (있고 아직 안 올라간 경우)
     if(thumbOverride&&!thumbOverride.uploaded&&thumbOverride.file){
       addLog('대표 사진 업로드 중...');
       try{
@@ -1385,16 +1278,18 @@ async function publish(){
         const sn=safeName(thumbOverride.filename||'thumbnail.jpg');
         const remoteName=ts+'_thumb_'+sn;
         const remotePath='public/uploads/'+remoteName;
-        const compFile=await compressImage(thumbOverride.file);const b64=await fileToBase64(compFile);
-        const result=await ghPutFile(remotePath,b64,null,'Upload thumbnail: '+remoteName);
+        const b64=await fileToBase64(thumbOverride.file);
+        await ghPutFile(remotePath,b64,null,'Upload thumbnail: '+remoteName);
         thumbOverride.uploaded=true;
         thumbOverride.uploadedPath='/uploads/'+remoteName;
         thumbOverride.src=thumbOverride.uploadedPath;
-        addLog('✓ 대표 사진 업로드 완료 (commit: '+result.commit.sha.slice(0,7)+')','ok');
-      }catch(e){throw new Error('대표 사진 업로드 실패: '+e.message)}
+        addLog('✓ 대표 사진 업로드 완료: '+remoteName);
+      }catch(e){
+        throw new Error('대표 사진 업로드 실패: '+e.message);
+      }
     }
     
-    // 2. thumbnail 결정
+    // 2. thumbnail 결정 (우선순위: thumbOverride > 별표 본문 사진 > 첫 본문 사진)
     let thumb='';
     if(thumbOverride&&(thumbOverride.uploadedPath||thumbOverride.src)){
       thumb=thumbOverride.uploadedPath||thumbOverride.src;
@@ -1405,75 +1300,44 @@ async function publish(){
     }
     addLog('대표 사진: '+(thumb||'(없음)'));
     
-    // 3. YAML
+    // 3. YAML 빌드
     addLog('마크다운 생성 중...');
     const yaml=buildYaml(meta,blocks,thumb);
     addLog('생성 완료 ('+yaml.length+'자)');
     
-    // 4. 경로 결정 + 최신 SHA 강제 fetch
+    // 4. 파일 경로 결정
     let path;
-    let freshSha=null; // editingSha 캐시 의존 X — 매번 새로 fetch
-    
     if(editingPath){
       path=editingPath;
-      addLog('수정 모드: 최신 SHA 확인 중...');
-      const existing=await ghGetFile(path);
-      if(!existing)throw new Error('수정하려는 파일이 GitHub에 없습니다: '+path);
-      freshSha=existing.sha;
-      addLog('현재 SHA: '+freshSha.slice(0,7),'info');
+      addLog('덮어쓰기: '+path);
     }else{
       const slug=slugify(meta.title);
       path='src/content/works/'+meta.date+'-'+slug+'.md';
       addLog('저장 경로: '+path);
-      addLog('기존 파일 확인 중...');
-      const existing=await ghGetFile(path);
-      if(existing){
-        if(!confirm('같은 날짜·제목의 글이 이미 있어요. 덮어쓸까요?\n\n경로: '+path)){
-          throw new Error('사용자가 덮어쓰기를 취소함');
+      // 같은 파일 존재 여부 확인
+      try{
+        const existing=await ghGetFile(path);
+        if(existing){
+          if(!confirm('같은 날짜·제목의 글이 이미 있어요. 덮어쓸까요?')){
+            throw new Error('사용자가 취소함');
+          }
+          editingSha=existing.sha;
+          addLog('기존 글 발견 → 업데이트');
         }
-        freshSha=existing.sha;
-        addLog('기존 글 발견 → 덮어쓰기 (SHA: '+freshSha.slice(0,7)+')','warn');
-      }else{
-        addLog('새 파일 생성','info');
-      }
+      }catch(e){if(e.message==='사용자가 취소함')throw e}
     }
     
-    // 5. PUT (응답 검증 포함)
-    addLog('GitHub에 저장 중...');
+    // 5. 파일 PUT
+    addLog('글 저장 중...');
     const b64=utf8ToBase64(yaml);
-    const putResult=await ghPutFile(path,b64,freshSha,(editingPath?'Update':'Publish')+' work: '+meta.title);
-    savedCommitSha=putResult.commit.sha;
-    savedPath=path;
-    addLog('✓ PUT 응답 OK (commit: '+savedCommitSha.slice(0,7)+')','ok');
+    const sha=editingSha;
+    await ghPutFile(path,b64,sha,(editingPath?'Update':'Publish')+' work: '+meta.title);
+    addLog('✓ 글 저장 완료');
+    addLog('사이트 빌드 대기 중... (2-3분 후 반영)');
+    addLog('');
+    addLog('✓ '+(editingPath?'수정':'발행')+' 완료!');
     
-    // 6. ⭐ 핵심: 실제로 저장됐는지 GET으로 검증
-    addLog('','');
-    addLog('🔍 저장 검증 중... (1.5초 대기 후 GET)','info');
-    try{
-      const verified=await verifyFileExists(path,yaml);
-      addLog('✓ 검증 성공: 파일이 GitHub에 실존합니다','ok');
-      addLog('  파일 SHA: '+verified.sha.slice(0,7),'ok');
-      addLog('  크기: '+verified.size+' bytes','ok');
-      verifyEl.className='verify-result ok';
-      verifyEl.innerHTML='✓ <strong>검증 완료</strong> — GitHub에 정상 저장됨<br>'+
-        '경로: '+path+'<br>'+
-        'Commit: '+savedCommitSha.slice(0,7)+' · File SHA: '+verified.sha.slice(0,7);
-    }catch(verifyErr){
-      // 검증 실패는 치명적이지만 PUT 자체는 성공했을 수도 있음
-      addLog('⚠️ 검증 실패: '+verifyErr.message,'err');
-      addLog('  PUT은 성공했지만 GET으로 확인이 안됨 — 잠시 후 다시 확인하세요','warn');
-      verifyEl.className='verify-result fail';
-      verifyEl.innerHTML='⚠️ <strong>검증 실패</strong> — PUT은 성공했으나 GET 확인 실패.<br>'+
-        verifyErr.message+'<br>'+
-        '잠시 후 사이트에서 직접 확인해주세요.';
-      // 검증 실패해도 일단 발행은 계속 진행 (PUT은 성공했으니)
-    }
-    
-    addLog('','');
-    addLog('사이트 빌드 대기 중... (Astro 빌드 후 2-3분 내 반영)','info');
-    addLog('✓ '+(editingPath?'수정':'발행')+' 완료!','ok');
-    
-    // 7. 성공 → 임시저장 삭제
+    // 6. 발행 성공 → 임시저장 삭제
     localStorage.removeItem(DRAFT_KEY);
     setSaveState('saved');
     isDirty=false;
@@ -1484,21 +1348,9 @@ async function publish(){
     footer.style.display='flex';
     close.style.display='block';
   }catch(e){
-    addLog('','');
-    addLog('✗ 실패: '+e.message,'err');
-    if(savedPath){
-      addLog('','');
-      addLog('참고: PUT은 시도됐습니다. 경로: '+savedPath,'warn');
-      if(savedCommitSha)addLog('Commit SHA: '+savedCommitSha,'warn');
-    }
-    title.textContent='✗ 실패';
-    verifyEl.className='verify-result fail';
-    verifyEl.innerHTML='✗ <strong>발행 실패</strong><br>'+e.message+'<br><br>'+
-      '<small>해결 방법:<br>'+
-      '1. 네트워크 연결 확인<br>'+
-      '2. CMS에 다시 로그인 (토큰 갱신)<br>'+
-      '3. GitHub Repository 권한 확인<br>'+
-      '4. 위 로그를 캡처해서 개발자에게 전달</small>';
+    addLog('');
+    addLog('✗ 실패: '+e.message);
+    title.textContent='실패';
     close.style.display='block';
     document.getElementById('pubBtn').disabled=false;
     document.getElementById('pubBtn2').disabled=false;
@@ -1509,8 +1361,8 @@ async function publish(){
 
 function closePubModal(){
   document.getElementById('pubModal').classList.remove('show');
-  document.getElementById('pubBtn').disabled=!TOKEN_VERIFIED;
-  document.getElementById('pubBtn2').disabled=!TOKEN_VERIFIED;
+  document.getElementById('pubBtn').disabled=false;
+  document.getElementById('pubBtn2').disabled=false;
 }
 
 // ========== 초기화 ==========

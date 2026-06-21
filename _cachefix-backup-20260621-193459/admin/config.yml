@@ -1,0 +1,99 @@
+backend:
+  name: github
+  repo: choi-hyuk-gi/florix-studio
+  branch: main
+  base_url: https://florix-cms-oauth.gurrl978.workers.dev
+  auth_endpoint: auth
+
+media_folder: "public/uploads"
+public_folder: "/uploads"
+
+locale: "ko"
+
+collections:
+  - name: "settings"
+    label: "사이트 설정"
+    label_singular: "사이트 설정"
+    folder: "src/content/settings"
+    create: false
+    slug: "{{slug}}"
+    editor:
+      preview: false
+    fields:
+      - { label: "Hero 배지 (작은 글씨)", name: "heroBadge", widget: "string" }
+      - { label: "Hero 제목 1줄", name: "heroTitle", widget: "string" }
+      - { label: "Hero 제목 2줄 (강조색)", name: "heroTitleAccent", widget: "string" }
+      - { label: "Hero 부제목 1", name: "heroSubtitle", widget: "string" }
+      - { label: "Hero 부제목 2", name: "heroSubtitle2", widget: "string" }
+      - { label: "Hero 우측 단일 사진", name: "heroImage", widget: "image", required: false }
+      - label: "Hero 슬라이드 사진들"
+        name: "heroSlides"
+        widget: "list"
+        required: false
+        summary: "{{fields.alt}}"
+        fields:
+          - { label: "사진", name: "image", widget: "image" }
+          - { label: "설명 (선택)", name: "alt", widget: "string", required: false }
+      - { label: "Recent Work 라벨", name: "recentWorkLabel", widget: "string" }
+      - { label: "Recent Work 번호", name: "recentWorkNumber", widget: "string" }
+      - { label: "강점 01 라벨", name: "feature1Label", widget: "string" }
+      - { label: "강점 02 라벨", name: "feature2Label", widget: "string" }
+      - { label: "강점 03 라벨", name: "feature3Label", widget: "string" }
+      - { label: "서비스 헤드라인 1줄", name: "servicesHeadline1", widget: "string" }
+      - { label: "서비스 헤드라인 2줄", name: "servicesHeadline2", widget: "string" }
+      - { label: "프로세스 헤드라인 1줄", name: "processHeadline1", widget: "string" }
+      - { label: "프로세스 헤드라인 2줄", name: "processHeadline2", widget: "string" }
+      - { label: "CTA 강조 문구", name: "ctaTitle2", widget: "string" }
+      - { label: "CTA 설명 문구", name: "ctaSubtitle", widget: "string" }
+  - name: "works"
+    label: "시공 사례"
+    label_singular: "시공 사례"
+    folder: "src/content/works"
+    create: true
+    slug: "{{year}}-{{month}}-{{day}}-{{slug}}"
+    summary: "{{title}} - {{location}}"
+    editor:
+      preview: false
+    fields:
+      - { label: "제목", name: "title", widget: "string" }
+      - { label: "지역", name: "location", widget: "string" }
+      - { label: "면적 (㎡)", name: "area", widget: "number", required: false }
+      - label: "공간 종류"
+        name: "category"
+        widget: "select"
+        options: ["주거", "카페", "상업공간", "사무공간", "기타"]
+      - { label: "시공일", name: "date", widget: "datetime", format: "YYYY-MM-DD", time_format: false }
+      - { label: "대표 사진", name: "thumbnail", widget: "image", required: false }
+      - { label: "사용 컬러/규사", name: "specs", widget: "string", required: false }
+      - { label: "시공 소요시간", name: "duration", widget: "string", required: false, default: "1일 완공" }
+      - { label: "메인 노출", name: "featured", widget: "boolean", default: false }
+      - label: "본문 블록 (텍스트와 사진을 번갈아 추가)"
+        name: "blocks"
+        widget: "list"
+        required: false
+        add_to_top: false
+        types:
+          - label: "텍스트"
+            name: "text"
+            widget: "object"
+            summary: "{{fields.content}}"
+            fields:
+              - { label: "내용", name: "content", widget: "markdown" }
+          - label: "사진"
+            name: "image"
+            widget: "object"
+            summary: "{{fields.caption}}"
+            fields:
+              - { label: "사진 업로드", name: "src", widget: "image" }
+              - { label: "사진 설명 (선택)", name: "caption", widget: "string", required: false }
+  - name: "faqs"
+    label: "FAQ (자주 묻는 질문)"
+    label_singular: "FAQ"
+    folder: "src/content/faqs"
+    create: true
+    slug: "{{slug}}"
+    summary: "{{question}}"
+    fields:
+      - { label: "질문", name: "question", widget: "string" }
+      - { label: "순서", name: "order", widget: "number", default: 99 }
+      - { label: "답변", name: "body", widget: "text" }
