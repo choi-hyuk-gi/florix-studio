@@ -19,19 +19,30 @@ const formattedDate = work.data.date.toLocaleDateString('ko-KR', {
   year: 'numeric', month: 'long', day: 'numeric'
 });
 
-// 텍스트 블록 정렬: **볼드**->strong, 줄바꿈->문단/<br> (HTML이면 그대로)
+// 텍스트 블록 출력: # 제목, 빈 줄 = 문단, 줄바꿈 = <br>. 굵게/색상이 있어도 항상 적용
 function formatBlockContent(raw) {
-    if (!raw) return '';
-    // 1. 짝이 맞는 **볼드** -> <strong> 변환 (HTML 유무와 무관하게 항상)
-    let t = raw.replace(/\*\*([^*\n]+?)\*\*/g, '<strong>$1</strong>');
-    // 2. 변환 후에도 남은 ** (짝 안 맞는 것)는 흔적 없이 제거 — 화면에 절대 노출 안 됨
-    t = t.replace(/\*\*/g, '');
-    // 3. 이미 HTML(<p>,<br>,<strong> 등)이 들어있으면 문단 처리 생략하고 그대로
-    const hasHtml = /<(p|br|div|strong|b|h[1-6]|ul|li|em)\b/i.test(t);
-    if (hasHtml) return t;
-    // 4. 순수 텍스트만: 빈 줄로 문단 분리, 단일 줄바꿈은 <br>
-    const paras = t.split(/\n{2,}/).map(p => p.trim()).filter(Boolean);
-    return paras.map(p => '<p>' + p.replace(/\n/g, '<br>') + '</p>').join('');
+  if (!raw) return '';
+  let t = String(raw).replace(/\r\n?/g, '\n');
+  t = t.replace(/\*\*([^*\n]+?)\*\*/g, '<strong>$1</strong>');
+  t = t.replace(/\*\*/g, '');
+  if (/<(p|div|h[1-6]|ul|ol|li)\b/i.test(t)) return t;
+  let html = '';
+  let buf = [];
+  const flush = () => { if (buf.length) { html += '<p>' + buf.join('<br>') + '</p>'; buf = []; } };
+  for (const line of t.split('\n')) {
+    const s = line.trim();
+    const h = s.match(/^(#{1,3})\s+(.+)$/);
+    if (h) {
+      flush();
+      const tag = h[1].length === 1 ? 'h2' : 'h3';
+      html += '<' + tag + '>' + h[2] + '</' + tag + '>';
+      continue;
+    }
+    if (!s) { flush(); continue; }
+    buf.push(s);
+  }
+  flush();
+  return html;
 }
 ---
 
@@ -121,6 +132,7 @@ function formatBlockContent(raw) {
 
 <style>
   .prose-content :global(h2) { font-size: 1.5rem; font-weight: 800; color: var(--color-text); margin-top: 2.5rem; margin-bottom: 0.75rem; letter-spacing: -0.02em; }
+  .prose-content :global(h3) { font-size: 1.2rem; font-weight: 700; color: var(--color-text); margin-top: 2rem; margin-bottom: 0.5rem; letter-spacing: -0.01em; }
   .prose-content :global(p) { font-size: 1rem; line-height: 1.85; color: var(--color-text); margin-bottom: 1rem; }
   .prose-content :global(ul) { margin: 1.25rem 0; padding-left: 0; list-style: none; }
   .prose-content :global(li) { position: relative; padding-left: 1.25rem; margin-bottom: 0.6rem; line-height: 1.75; }
